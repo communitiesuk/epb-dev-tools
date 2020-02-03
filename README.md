@@ -28,5 +28,13 @@ $ make setup
 ## Shutting down
 
 ```shell script
-docker-compose down
+$ docker-compose down
+```
+
+## Resetting the environment
+
+To reset the environment (reset db, re-seed db) run the following command
+
+```shell script
+$ make reset
 ```
