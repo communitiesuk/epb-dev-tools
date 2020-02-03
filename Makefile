@@ -16,3 +16,6 @@ sql-auth-server:
 
 sql-register-api:
 	@$(SHELL) scripts/psql-connect.sh "epb-register-api" "epb_register"
+
+logs:
+	@docker-compose logs -f

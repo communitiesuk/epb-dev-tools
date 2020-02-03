@@ -47,3 +47,21 @@ all the codebases.
 ```shell script
 $ make pull
 ```
+
+## Direct SQL access
+
+You can connect to the local postgres dbs for each service by running
+
+```shell script
+$ make sql-register-api
+OR
+$ make sql-auth-server
+```
+
+## Tailing the logs
+
+To tail the logs for ALL SERVICES run the following (CTRL + C to quit)
+
+```shell script
+$ make logs
+```
