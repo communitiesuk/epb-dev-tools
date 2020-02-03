@@ -38,3 +38,12 @@ To reset the environment (reset db, re-seed db) run the following command
 ```shell script
 $ make reset
 ```
+
+## Updating all repositories
+
+To update the codebases just run the command below, this will run git pull in
+all the codebases.
+
+```shell script
+$ make pull
+```

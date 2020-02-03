@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+pull_application() {
+  CLONE_URL=$1
+  CLONE_DIR="$(get_parent_directory)/$(get_name_from_git_uri "$CLONE_URL")"
+
+  if [[ -d $CLONE_DIR ]]; then
+    echo -e "Pulling git repo at $CLONE_DIR\n"
+    ORIGIN_DIR=$PWD
+
+    cd "$CLONE_DIR" || exit 1
+    git pull
+    cd "$ORIGIN_DIR" || exit 1
+  else
+    echo -e "Directory does not exist, try running ''\n"
+  fi
+}
+
 clone_application() {
   HELP_TEXT=$1
   CLONE_URL=$2
