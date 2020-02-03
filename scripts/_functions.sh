@@ -12,7 +12,7 @@ pull_application() {
     git pull
     cd "$ORIGIN_DIR" || exit 1
   else
-    echo -e "Directory does not exist, try running ''\n"
+    echo -e "Directory does not exist, try running 'make setup'\n"
   fi
 }
 
