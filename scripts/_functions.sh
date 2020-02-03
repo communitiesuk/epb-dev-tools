@@ -118,7 +118,7 @@ services:
       dockerfile: ${PWD}/epbAuthServer.Dockerfile
     entrypoint: bash -c 'cd /app && bundle exec rackup -p 80 -o 0.0.0.0'
     environment:
-      DATABASE_URL: postgresql://epb_auth:superSecret30CharacterPassword@epb-auth-server-db/epb_aut
+      DATABASE_URL: postgresql://epb_auth:superSecret30CharacterPassword@epb-auth-server-db/epb_auth
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
     links:
