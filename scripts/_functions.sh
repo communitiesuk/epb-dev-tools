@@ -109,6 +109,17 @@ generate_template() {
   cat <<EOF > docker-compose.yml
 version: '3.7'
 services:
+  epb-proxy:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/nginxReverseProxy.Dockerfile
+    links:
+      - epb-auth-server
+      - epb-register-api
+      - epb-frontend
+    ports:
+      - "80:80"
+
   epb-frontend:
     build:
       context: ${EPB_FRONTEND_PATH}
@@ -118,15 +129,14 @@ services:
       EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
       EPB_AUTH_CLIENT_SECRET: test-client-secret
       EPB_AUTH_SERVER: http://epb-auth-server
-      EPB_UNLEASH_URI: https://google.com
+      EPB_UNLEASH_URI: http://epb-feature-flag/
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: production
     links:
       - epb-auth-server
+      - epb-feature-flag
       - epb-register-api
-    ports:
-      - "8080:80"
     volumes:
       - ${EPB_FRONTEND_PATH}:/app
 
@@ -159,11 +169,12 @@ services:
       dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
       DATABASE_URL: postgresql://epb_register:superSecret30CharacterPassword@epb-register-api-db/epb_register
-      EPB_UNLEASH_URI: https://google.com
+      EPB_UNLEASH_URI: http://epb-feature-flag/
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: production
     links:
+      - epb-feature-flag
       - epb-register-api-db
     volumes:
       - ${EPB_REGISTER_API_PATH}:/app

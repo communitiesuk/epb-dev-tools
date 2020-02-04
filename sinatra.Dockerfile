@@ -11,4 +11,6 @@ RUN cd /app && bundle install
 
 RUN rm -rf /app
 
+EXPOSE 80
+
 ENTRYPOINT bash -c 'cd /app && bundle exec rackup -p 80 -o 0.0.0.0'

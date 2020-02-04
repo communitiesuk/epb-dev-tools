@@ -19,3 +19,5 @@ EPB_REGISTER_API_PATH=$EPB_REGISTER_API_PATH \
 generate_template
 
 reset_environment
+
+setup_hostsfile
