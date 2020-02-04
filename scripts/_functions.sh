@@ -89,6 +89,9 @@ reset_environment() {
     docker-compose build
     docker-compose up -d
 
+    echo "Waiting for postgres to be up and running."
+    sleep 10
+
     # Setup db and other essentials
     docker-compose exec epb-auth-server bash -c 'cd /app && make db-setup'
     docker-compose exec epb-auth-server-db bash -c "psql --username epb_auth -d epb_auth -c \"INSERT INTO clients (id, name, secret) VALUES ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'epb_frontend', 'test-client-secret');\""
@@ -147,6 +150,8 @@ services:
     environment:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb_auth
+    volumes:
+      - ./data/auth-server:/var/lib/postgresql/data
 
   epb-register-api:
     build:
@@ -170,6 +175,8 @@ services:
     environment:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb_register
+    volumes:
+      - ./data/register-api:/var/lib/postgresql/data
 
 EOF
 }
