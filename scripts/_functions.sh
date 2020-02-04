@@ -109,8 +109,7 @@ services:
   epb-frontend:
     build:
       context: ${EPB_FRONTEND_PATH}
-      dockerfile: ${PWD}/epbFrontend.Dockerfile
-    entrypoint: bash -c 'cd /app && bundle exec rackup -p 80 -o 0.0.0.0'
+      dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
       EPB_API_URL: http://epb-register-api
       EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
@@ -131,8 +130,7 @@ services:
   epb-auth-server:
     build:
       context: ${EPB_AUTH_SERVER_PATH}
-      dockerfile: ${PWD}/epbAuthServer.Dockerfile
-    entrypoint: bash -c 'cd /app && bundle exec rackup -p 80 -o 0.0.0.0'
+      dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
       DATABASE_URL: postgresql://epb_auth:superSecret30CharacterPassword@epb-auth-server-db/epb_auth
       JWT_ISSUER: epb-auth-server
@@ -153,8 +151,7 @@ services:
   epb-register-api:
     build:
       context: ${EPB_REGISTER_API_PATH}
-      dockerfile: ${PWD}/epbRegisterApi.Dockerfile
-    entrypoint: bash -c 'cd /app && bundle exec rackup -p 80 -o 0.0.0.0'
+      dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
       DATABASE_URL: postgresql://epb_register:superSecret30CharacterPassword@epb-register-api-db/epb_register
       EPB_UNLEASH_URI: https://google.com
