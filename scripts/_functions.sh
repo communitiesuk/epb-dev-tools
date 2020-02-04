@@ -178,5 +178,43 @@ services:
     volumes:
       - ./data/register-api:/var/lib/postgresql/data
 
+  epb-feature-flag:
+    environment:
+      DATABASE_URL: postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed
+      HTTP_HOST: 0.0.0.0
+      HTTP_PORT: 80
+    image: unleashorg/unleash-server:3.1
+    links:
+      - epb-feature-flag-db
+    command: >
+      sh -c "
+        while ! nc -z epb-feature-flag-db 5432; do
+          echo 'Postgres is unavailable.'
+          sleep 1
+        done
+        sleep 10
+        npm run start"
+
+  epb-feature-flag-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: superSecret30CharacterPassword
+      POSTGRES_USER: unleashed
+    volumes:
+      - ./data/feature-flag:/var/lib/postgresql/data
+
 EOF
+}
+
+setup_hostsfile() {
+  HOSTS_LINE="127.0.0.1 epb-frontend epb-auth-server epb-register-api"
+
+  if grep -q "$HOSTS_LINE" "/etc/hosts"; then
+    echo "Hostsfile configuration already there"
+  else
+    echo "Injecting hostsfile configuration"
+    echo "$HOSTS_LINE" | sudo tee -a /etc/hosts
+  fi
 }
