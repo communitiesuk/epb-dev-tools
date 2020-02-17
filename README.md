@@ -22,7 +22,7 @@ preconfigured to just work.
 **Getting up and running**
 
 ```shell script
-$ make setup
+$ make install
 ```
 
 ## Shutting down

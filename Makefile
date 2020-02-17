@@ -1,26 +1,35 @@
-.PHONY: setup reset pull sql-auth-server sql-register-api
+.PHONY: setup reset pull sql-auth-server sql-register-api help
 .DEFAULT_GOAL := help
 SHELL := /usr/bin/env bash
 
-setup: ## do an initial setup and reset of the dev environment
-	@$(SHELL) scripts/setup.sh
+install: ## install the development environment and tools
+	@$(SHELL) scripts/install.sh
 
 reset: ## reset the development environment
-	@source scripts/_functions.sh \
-		&& reset_environment
+	@$(SHELL) scripts/reset.sh
+
+rebuild: ## force rebuild all docker images
+	@$(SHELL) scripts/rebuild.sh
 
 pull: ## git pull in all repositories
 	@$(SHELL) scripts/pull.sh
 
-sql-auth-server: ## open a psql shell in the auth server db
-	@$(SHELL) scripts/psql-connect.sh "epb-auth-server" "epb_auth"
+sql: ## open an sql shell in the given application
+	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
+	@$(SHELL) scripts/sql.sh
 
-sql-register-api: ## open a psql shell in the register api db
-	@$(SHELL) scripts/psql-connect.sh "epb-register-api" "epb_register"
+migrate: ## run migrations (epb migrate epb-auth-server)
+	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
+	@docker-compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:migrate'
 
-logs: ## tail logs from all containers
-	@docker-compose logs -f
+rollback: ## rollback migrations (epb rollback epb-auth-server)
+	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
+	@docker-compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:rollback'
 
-.PHONY: help
+logs: ## tail container(s) logs (epb logs epb-auth-server)
+	@docker-compose logs -f ${APP}
+
 help:
+	@echo "EPB Devtools Help"
+	@echo
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
