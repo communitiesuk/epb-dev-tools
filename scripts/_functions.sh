@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 pull_application() {
   CLONE_URL=$1
   CLONE_DIR="$(get_parent_directory)/$(get_name_from_git_uri "$CLONE_URL")"
@@ -79,29 +81,6 @@ get_parent_directory() {
   unset 'CODE_DIR[${#CODE_DIR[@]}-1]'
   # shellcheck disable=SC2068
   echo "/$(join / ${CODE_DIR[@]})"
-}
-
-reset_environment() {
-  if [[ -n $(confirm "Do you want to reset and configure the dev environment?") ]]; then
-    # Ensure images are built
-    docker-compose down
-    docker-compose rm -f
-    docker-compose build
-    docker-compose up -d
-
-    echo "Waiting for postgres to be up and running."
-    sleep 10
-
-    # Setup db and other essentials
-    docker-compose exec epb-auth-server bash -c 'cd /app && make db-setup'
-    docker-compose exec epb-auth-server-db bash -c "psql --username epb_auth -d epb_auth -c \"INSERT INTO clients (id, name, secret) VALUES ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'epb_frontend', 'test-client-secret');\""
-
-    docker-compose exec epb-register-api bash -c 'cd /app && make setup-db'
-    docker-compose exec epb-register-api bash -c 'cd /app && bundle exec rake import_postcode'
-    docker-compose exec epb-register-api bash -c 'cd /app && bundle exec rake import_postcode_outcode'
-    docker-compose exec epb-register-api bash -c 'cd /app && bundle exec rake generate_schemes'
-    docker-compose exec epb-register-api bash -c 'cd /app && bundle exec rake generate_assessor'
-  fi
 }
 
 generate_template() {
@@ -228,4 +207,33 @@ setup_hostsfile() {
     echo "Injecting hostsfile configuration"
     echo "$HOSTS_LINE" | sudo tee -a /etc/hosts
   fi
+}
+
+setup_bash_profile() {
+  ALIAS_INFO="alias epb=\"$DIR/epb\""
+
+  if [[ -f "$HOME/.zshrc" ]]; then
+    if [[ -z $(confirm "Add epb to profile at ~/.zshrc?") ]]; then
+      if grep -q "$ALIAS_INFO" "$HOME/.zshrc"; then
+        # shellcheck disable=SC2088
+        echo "~/.zshrc already has the line $ALIAS_INFO"
+      else
+        echo "Injecting into ~/.zshrc, run source ~/.zshrc to use the command"
+        echo "$ALIAS_INFO" | tee -a ~/.zshrc
+      fi
+    fi
+  fi
+
+    if [[ -f "$HOME/.bash_profile" ]]; then
+    if [[ -z $(confirm "Add epb to profile at ~/.bash_profile?") ]]; then
+      if grep -q "$ALIAS_INFO" "$HOME/.bash_profile"; then
+        # shellcheck disable=SC2088
+        echo "~/.bash_profile already has the line $ALIAS_INFO"
+      else
+        echo "Injecting into ~/.bash_profile, run source ~/.bash_profile to use the command"
+        echo "$ALIAS_INFO" | tee -a ~/.bash_profile
+      fi
+    fi
+  fi
+
 }

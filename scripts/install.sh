@@ -18,6 +18,8 @@ EPB_AUTH_SERVER_PATH=$EPB_AUTH_SERVER_PATH \
 EPB_REGISTER_API_PATH=$EPB_REGISTER_API_PATH \
 generate_template
 
-reset_environment
+bash scripts/reset.sh
 
 setup_hostsfile
+
+setup_bash_profile
