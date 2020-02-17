@@ -11,6 +11,12 @@ reset: ## reset the development environment
 rebuild: ## force rebuild all docker images
 	@$(SHELL) scripts/rebuild.sh
 
+start: ## start all docker images
+	@$(SHELL) scripts/start.sh
+
+stop: ## pause all docker images
+	@$(SHELL) scripts/stop.sh
+
 pull: ## git pull in all repositories
 	@$(SHELL) scripts/pull.sh
 
