@@ -16,52 +16,24 @@ preconfigured to just work.
 
 * docker
 * docker-compose
-* bash 4
 * git
+* bash 4 (for the installation scripts)
 
-**Getting up and running**
+### Scripted Installation
 
-```shell script
-$ make install
-```
+The scripted installation was tested on macOS. For other OSs you may want to run
+through the manual installation instructions.
 
-## Shutting down
+1. Create a new directory `MHCLG` to store the dev tools
+2. Clone this repository into the `MHCLG` directory so it is located at 
+    `MHCLG/epb-dev-tools`
+3. From the directory `MHCLG/epb-dev-tools` run the installation script
+    `make install`
 
-```shell script
-$ docker-compose down
-```
+This script will ask for sudo access as part of the installation, this is needed
+to create the needed entries in `/etc/hosts`.
 
-## Resetting the environment
+### Manual Installation
 
-To reset the environment (reset db, re-seed db) run the following command
-
-```shell script
-$ make reset
-```
-
-## Updating all repositories
-
-To update the codebases just run the command below, this will run git pull in
-all the codebases.
-
-```shell script
-$ make pull
-```
-
-## Direct SQL access
-
-You can connect to the local postgres dbs for each service by running
-
-```shell script
-$ make sql-register-api
-OR
-$ make sql-auth-server
-```
-
-## Tailing the logs
-
-To tail the logs for ALL SERVICES run the following (CTRL + C to quit)
-
-```shell script
-$ make logs
-```
+Instructions to manually install epb dev tools can be found 
+[here](./MANUAL_INSTALL.md).

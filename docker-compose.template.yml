@@ -1,0 +1,108 @@
+version: '3.7'
+services:
+  epb-proxy:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/nginxReverseProxy.Dockerfile
+    links:
+      - epb-auth-server
+      - epb-register-api
+      - epb-frontend
+    ports:
+      - "80:80"
+
+  epb-frontend:
+    build:
+      context: ${EPB_FRONTEND_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      EPB_API_URL: http://epb-register-api
+      EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
+      EPB_AUTH_CLIENT_SECRET: test-client-secret
+      EPB_AUTH_SERVER: http://epb-auth-server
+      EPB_UNLEASH_URI: http://epb-feature-flag/
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+      STAGE: production
+    links:
+      - epb-auth-server
+      - epb-feature-flag
+      - epb-register-api
+    volumes:
+      - ${EPB_FRONTEND_PATH}:/app
+
+  epb-auth-server:
+    build:
+      context: ${EPB_AUTH_SERVER_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://epb_auth:superSecret30CharacterPassword@epb-auth-server-db/epb_auth
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+    links:
+      - epb-auth-server-db
+    volumes:
+      - ${EPB_AUTH_SERVER_PATH}:/app
+
+  epb-auth-server-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: superSecret30CharacterPassword
+      POSTGRES_USER: epb_auth
+    volumes:
+      - ./data/auth-server:/var/lib/postgresql/data
+
+  epb-register-api:
+    build:
+      context: ${EPB_REGISTER_API_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://epb_register:superSecret30CharacterPassword@epb-register-api-db/epb_register
+      EPB_UNLEASH_URI: http://epb-feature-flag/
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+      STAGE: production
+    links:
+      - epb-feature-flag
+      - epb-register-api-db
+    volumes:
+      - ${EPB_REGISTER_API_PATH}:/app
+
+  epb-register-api-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: superSecret30CharacterPassword
+      POSTGRES_USER: epb_register
+    volumes:
+      - ./data/register-api:/var/lib/postgresql/data
+
+  epb-feature-flag:
+    environment:
+      DATABASE_URL: postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed
+      HTTP_HOST: 0.0.0.0
+      HTTP_PORT: 80
+    image: unleashorg/unleash-server:3.1
+    links:
+      - epb-feature-flag-db
+    command: >
+      sh -c "
+        while ! nc -z epb-feature-flag-db 5432; do
+          echo 'Postgres is unavailable.'
+          sleep 1
+        done
+        sleep 10
+        npm run start"
+
+  epb-feature-flag-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: superSecret30CharacterPassword
+      POSTGRES_USER: unleashed
+    volumes:
+      - ./data/feature-flag:/var/lib/postgresql/data
