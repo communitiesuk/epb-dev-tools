@@ -17,7 +17,7 @@ preconfigured to just work.
 * docker
 * docker-compose
 * git
-* bash 4 (for the installation scripts)
+* bash 4 or greater (only if using installation scripts)
 
 ### Scripted Installation
 
