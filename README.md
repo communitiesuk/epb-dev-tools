@@ -37,3 +37,24 @@ to create the needed entries in `/etc/hosts`.
 
 Instructions to manually install epb dev tools can be found 
 [here](./MANUAL_INSTALL.md).
+
+### Running the service
+
+Assuming all the installation steps succeeded, you can now start the EPB 
+register service.
+
+```shell script
+$ epb start
+```
+
+## Ongoing operation
+
+### When the service or dev tools gets updated
+
+When you want to ensure that your local copy of the service is up to date, you 
+can run the following from the `MHCLG/epb-dev-tools` folder.
+
+```shell script
+$ git pull # will ensure that the epb-dev-tools repo is up to date
+$ make install # will ensure that the docker compose file is up to date
+```

@@ -3,5 +3,5 @@
 source scripts/_functions.sh
 
 if [[ -n $(confirm "Do you want to start the dev environment?") ]]; then
-  cd "$DIR/.." && docker-compose up -d
+  cd "$DIR/.." && docker-compose unpause && docker-compose up -d
 fi

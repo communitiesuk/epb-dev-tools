@@ -19,7 +19,7 @@ services:
       EPB_API_URL: http://epb-register-api
       EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
       EPB_AUTH_CLIENT_SECRET: test-client-secret
-      EPB_AUTH_SERVER: http://epb-auth-server
+      EPB_AUTH_SERVER: http://epb-auth-server/auth
       EPB_UNLEASH_URI: http://epb-feature-flag/
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
@@ -39,6 +39,7 @@ services:
       DATABASE_URL: postgresql://epb_auth:superSecret30CharacterPassword@epb-auth-server-db/epb_auth
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
+      URL_PREFIX: /auth
     links:
       - epb-auth-server-db
     volumes:
