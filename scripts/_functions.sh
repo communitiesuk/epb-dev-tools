@@ -200,7 +200,7 @@ EOF
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 epb-frontend epb-auth-server epb-register-api"
+  HOSTS_LINE="127.0.0.1 epb-frontend epb-register-api"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"

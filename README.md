@@ -58,3 +58,12 @@ can run the following from the `MHCLG/epb-dev-tools` folder.
 $ git pull # will ensure that the epb-dev-tools repo is up to date
 $ make install # will ensure that the docker compose file is up to date
 ```
+
+### Where do services sit?
+
+There are three services that make up the Energy Performance of Buildings 
+Register
+
+* The register api - found at http://epb-register-api
+* The register's authentication service - found at http://epb-register-api/auth
+* The register's frontend service - found at http://epb-frontend
