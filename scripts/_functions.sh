@@ -124,7 +124,7 @@ services:
       context: ${EPB_AUTH_SERVER_PATH}
       dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
-      DATABASE_URL: postgresql://epb_auth:superSecret30CharacterPassword@epb-auth-server-db/epb_auth
+      DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-auth-server-db/epb
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       URL_PREFIX: /auth
@@ -139,7 +139,7 @@ services:
       dockerfile: ${PWD}/epbDatabase.Dockerfile
     environment:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
-      POSTGRES_USER: epb_auth
+      POSTGRES_USER: epb
     volumes:
       - ./data/auth-server:/var/lib/postgresql/data
 
@@ -148,7 +148,7 @@ services:
       context: ${EPB_REGISTER_API_PATH}
       dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
-      DATABASE_URL: postgresql://epb_register:superSecret30CharacterPassword@epb-register-api-db/epb_register
+      DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
       EPB_UNLEASH_URI: http://epb-feature-flag/
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
@@ -165,7 +165,7 @@ services:
       dockerfile: ${PWD}/epbDatabase.Dockerfile
     environment:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
-      POSTGRES_USER: epb_register
+      POSTGRES_USER: epb
     volumes:
       - ./data/register-api:/var/lib/postgresql/data
 
