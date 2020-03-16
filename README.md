@@ -35,8 +35,8 @@ to create the needed entries in `/etc/hosts`.
 
 ### Manual Installation
 
-Instructions to manually install epb dev tools can be found 
-[here](./MANUAL_INSTALL.md).
+Although unsupported, instructions to manually install epb dev tools can be 
+found [here](./MANUAL_INSTALL.md).
 
 ### Running the service
 
