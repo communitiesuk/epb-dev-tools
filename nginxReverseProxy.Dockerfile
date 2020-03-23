@@ -1,5 +1,5 @@
 FROM nginx
 
-COPY ./nginx.conf /etc/nginx/conf.d/reverse-proxy.conf
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
