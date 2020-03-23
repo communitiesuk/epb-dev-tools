@@ -5,6 +5,13 @@ in the main [README](./README.md) file. Using this script will ensure that we
 can support your use of this toolset for development. You may not be able to 
 take advantage of updates to this repo without using the automated installation. 
 
+**Requirements**
+
+* docker
+* docker-compose
+* git
+* bash 4 or greater (only if using installation scripts)
+
 If you are running under windows, or you just want to manually install
 rather than trusting a random script on the internet, you can do by following 
 these steps:

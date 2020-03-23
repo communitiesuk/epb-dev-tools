@@ -12,14 +12,14 @@ preconfigured to just work.
 
 ## Up and Running
 
+### Scripted Installation
+
 **Requirements**
 
 * docker
 * docker-compose
 * git
 * bash 4 or greater (only if using installation scripts)
-
-### Scripted Installation
 
 The scripted installation was tested on macOS. For other OSs you may want to run
 through the manual installation instructions.
@@ -32,6 +32,26 @@ through the manual installation instructions.
 
 This script will ask for sudo access as part of the installation, this is needed
 to create the needed entries in `/etc/hosts`.
+
+### Portable Vagrant Installation
+
+**Requirements**
+
+* vagrant
+* vagrant hostsupdater (`vagrant plugin install vagrant-hostsupdater`)
+* virtualbox
+
+To run the whole infrastructure in a vagrant environment just run the following:
+
+```shell script
+$ vagrant up
+# ... wait for the installation to finish
+$ vagrant reload
+```
+
+**Known issues**
+
+* css files on http://epb-frontend are not currently loading due to a mimetype conflict.
 
 ### Manual Installation
 
