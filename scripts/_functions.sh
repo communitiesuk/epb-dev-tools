@@ -6,6 +6,8 @@ pull_application() {
   CLONE_URL=$1
   CLONE_DIR="$(get_parent_directory)/$(get_name_from_git_uri "$CLONE_URL")"
 
+  echo -e "Checking directory $CLONE_DIR\n"
+
   if [[ -d $CLONE_DIR ]]; then
     echo -e "Pulling git repo at $CLONE_DIR\n"
     ORIGIN_DIR=$PWD
@@ -14,7 +16,8 @@ pull_application() {
     git pull
     cd "$ORIGIN_DIR" || exit 1
   else
-    echo -e "Directory does not exist, try running 'make setup'\n"
+    echo -e "Cloning git repo at $CLONE_DIR\n"
+    git clone "$CLONE_URL" "$CLONE_DIR"
   fi
 }
 
@@ -34,7 +37,7 @@ clone_application() {
       echo -e "Cloning into local directory $CODEBASE_PATH\n"
       git clone "$CLONE_URL" "$CLONE_DIR"
     else
-      echo -e "Directory already exists, continuing\n"
+      echo -e "Directory $CODEBASE_PATH already exists, continuing\n"
     fi
   fi
 
@@ -48,19 +51,28 @@ clone_application() {
 
 confirm() {
   HELP_TEXT=$1
-  while true; do
-    read -rp "$HELP_TEXT [y/N] " CONFIRMATION
-    case $CONFIRMATION in
-    [Yy]*)
-      CONFIRMED=1
-      break
-      ;;
-    *)
-      break
-      ;;
-    esac
-  done
-  echo $CONFIRMED
+
+  if [[ "$OVERRIDE_CONFIRM" == "true" ]]; then
+    echo "Overriding confirmation for $HELP_TEXT"
+    CONFIRMED=1
+    echo $CONFIRMED
+
+  else
+    while true; do
+      read -rp "$HELP_TEXT [y/N] " CONFIRMATION
+      case $CONFIRMATION in
+      [Yy]*)
+        CONFIRMED=1
+        break
+        ;;
+      *)
+        break
+        ;;
+      esac
+    done
+    echo $CONFIRMED
+
+  fi
 }
 
 join() {
@@ -205,7 +217,7 @@ EOF
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 epb-frontend epb-register-api"
+  HOSTS_LINE="127.0.0.1 epb-frontend epb-register-api epb-auth-server"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"

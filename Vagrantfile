@@ -8,6 +8,11 @@ Vagrant.configure("2") do |config|
   config.vm.network :private_network, ip: '192.168.33.10'
   config.hostsupdater.aliases = %w(epb-register-api epb-auth-server)
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get upgrade -y
@@ -28,9 +33,9 @@ Vagrant.configure("2") do |config|
     chown -R vagrant:vagrant /home/vagrant/code
     cp /home/vagrant/code/epb-dev-tools/nginx.conf /etc/nginx/conf.d/default.conf
     
-    sudo -H -u vagrant bash -c 'cd /home/vagrant/code/epb-dev-tools && export OVERRIDE_CONFIRM=true && make install'
-
     cd /home/vagrant/code/epb-dev-tools
+    OVERRIDE_CONFIRM=true make install
+
     docker-compose down
     cp epb.service /etc/systemd/system/epb.service
     chmod 644 /etc/systemd/system/epb.service
