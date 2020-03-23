@@ -72,7 +72,7 @@ join() {
 get_name_from_git_uri() {
   CLONE_URL=$1
   IFS='/' read -ra CODE_DIR <<<"$CLONE_URL"
-  CODE_DIR="${CODE_DIR[1]}"
+  CODE_DIR="${CODE_DIR[${#CODE_DIR[@]}-1]}"
   echo "${CODE_DIR/.git/}"
 }
 
@@ -141,7 +141,7 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb
     volumes:
-      - ./data/auth-server:/var/lib/postgresql/data
+      - auth-server:/var/lib/postgresql/data
 
   epb-register-api:
     build:
@@ -167,7 +167,7 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb
     volumes:
-      - ./data/register-api:/var/lib/postgresql/data
+      - register-api:/var/lib/postgresql/data
 
   epb-feature-flag:
     environment:
@@ -194,7 +194,12 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: unleashed
     volumes:
-      - ./data/feature-flag:/var/lib/postgresql/data
+      - feature-flag:/var/lib/postgresql/data
+
+volumes:
+  feature-flag:
+  register-api:
+  auth-server:
 
 EOF
 }

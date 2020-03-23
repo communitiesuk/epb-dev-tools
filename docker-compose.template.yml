@@ -53,7 +53,7 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb_auth
     volumes:
-      - ./data/auth-server:/var/lib/postgresql/data
+      - auth-server:/var/lib/postgresql/data
 
   epb-register-api:
     build:
@@ -79,7 +79,7 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb_register
     volumes:
-      - ./data/register-api:/var/lib/postgresql/data
+      - register-api:/var/lib/postgresql/data
 
   epb-feature-flag:
     environment:
@@ -106,4 +106,9 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: unleashed
     volumes:
-      - ./data/feature-flag:/var/lib/postgresql/data
+      - feature-flag:/var/lib/postgresql/data
+
+volumes:
+  feature-flag:
+  register-api:
+  auth-server:
