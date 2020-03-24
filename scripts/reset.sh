@@ -23,4 +23,7 @@ else
   docker-compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake import_postcode_outcode'
   docker-compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake generate_schemes'
   docker-compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake generate_assessor'
+
+  echo "Setting up Frontend"
+  docker-compose exec -T epb-frontend bash -c 'cd /app && yarn install && make frontend-build'
 fi
