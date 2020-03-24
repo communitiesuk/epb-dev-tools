@@ -49,10 +49,6 @@ $ vagrant up
 $ vagrant reload
 ```
 
-**Known issues**
-
-* css files on http://epb-frontend are not currently loading due to a mimetype conflict.
-
 ### Manual Installation
 
 Although unsupported, instructions to manually install epb dev tools can be 
