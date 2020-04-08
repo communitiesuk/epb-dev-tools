@@ -233,7 +233,7 @@ setup_bash_profile() {
   ALIAS_INFO="alias epb=\"$DIR/epb\""
 
   if [[ -f "$HOME/.zshrc" ]]; then
-    if [[ -z $(confirm "Add epb to profile at ~/.zshrc?") ]]; then
+    if [[ -n $(confirm "Add epb to profile at ~/.zshrc?") ]]; then
       if grep -q "$ALIAS_INFO" "$HOME/.zshrc"; then
         # shellcheck disable=SC2088
         echo "~/.zshrc already has the line $ALIAS_INFO"
@@ -244,8 +244,8 @@ setup_bash_profile() {
     fi
   fi
 
-    if [[ -f "$HOME/.bash_profile" ]]; then
-    if [[ -z $(confirm "Add epb to profile at ~/.bash_profile?") ]]; then
+  if [[ -f "$HOME/.bash_profile" ]]; then
+    if [[ -n $(confirm "Add epb to profile at ~/.bash_profile?") ]]; then
       if grep -q "$ALIAS_INFO" "$HOME/.bash_profile"; then
         # shellcheck disable=SC2088
         echo "~/.bash_profile already has the line $ALIAS_INFO"
