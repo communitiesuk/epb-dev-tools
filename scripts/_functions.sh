@@ -110,6 +110,8 @@ services:
       - epb-frontend
     ports:
       - "80:80"
+    volumes:
+      - ${PWD}/http_files:/var/www/http_files
 
   epb-frontend:
     build:

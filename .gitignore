@@ -1,2 +1,5 @@
 docker-compose.yml
 .vagrant/
+http_files/*
+!http_files/.gitkeep
+security-reports/
