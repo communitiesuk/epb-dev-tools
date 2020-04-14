@@ -1,4 +1,4 @@
-FROM ruby:2.6-stretch
+FROM ruby:2.6.5-stretch
 
 ENV LANG=en_GB.UTF-8
 
