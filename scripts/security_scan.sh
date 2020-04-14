@@ -9,9 +9,23 @@ LOCAL_TESTING_API_SPEC=$(echo "$OPEN_API_SPEC_JSON" | jq '.servers = [{"url":"ht
 echo "$LOCAL_TESTING_API_SPEC" > "$DIR/../http_files/api-spec.json"
 
 PROXY_SERVER_IP=$(docker inspect epb-dev-tools_epb-proxy_1 | jq -r '.[0].NetworkSettings.Networks["epb-dev-tools_default"].IPAddress')
-AUTH_TOKEN=$(curl -s -X POST http://epb-register-api/auth/oauth/token -H 'Content-Length: 0' -H 'Authorization: Basic NmY2MTU3OWUtZTgyOS00N2Q3LWFlZjUtN2QzNmFkMDY4YmVlOnRlc3QtY2xpZW50LXNlY3JldA==' | jq -r '.access_token')
 
 if [ ! -d "$DIR/../security-reports" ]; then mkdir -p "$DIR/../security-reports"; fi
+
+echo -e "-> Running baseline scan against the front end application";
+
+docker run -it \
+  --network=epb-dev-tools_default \
+  --add-host=epb-frontend:$PROXY_SERVER_IP \
+  --volume=$DIR/../security-reports:/zap/wrk  \
+  owasp/zap2docker-stable \
+  zap-baseline.py \
+  -t http://epb-frontend/ \
+  -w "$(date +%s)-frontend-report.md"
+
+echo -e "-> Running api scan against the api using the api spec";
+
+AUTH_TOKEN=$(curl -s -X POST http://epb-register-api/auth/oauth/token -H 'Content-Length: 0' -H 'Authorization: Basic NmY2MTU3OWUtZTgyOS00N2Q3LWFlZjUtN2QzNmFkMDY4YmVlOnRlc3QtY2xpZW50LXNlY3JldA==' | jq -r '.access_token')
 
 docker run -it \
   --network=epb-dev-tools_default \
@@ -21,7 +35,7 @@ docker run -it \
   zap-api-scan.py \
   -t http://epb-register-api/test_files/api-spec.json \
   -f openapi \
-  -w "$(date +%s)-report.md" \
+  -w "$(date +%s)-api-report.md" \
   -z "-config replacer.full_list(0).description=oauth
   -config replacer.full_list(0).enabled=true
   -config replacer.full_list(0).matchtype=REQ_HEADER
