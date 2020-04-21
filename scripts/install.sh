@@ -20,7 +20,7 @@ generate_template
 
 # Are we running in vagrant?
 if [[ "$USER" = "root" ]]; then
-  echo "I think this is a vagrnat environment, epb-proxy needs to run on a different port."
+  echo "I think this is a vagrant environment, epb-proxy needs to run on a different port."
 
   echo "Moving port in docker-compose.yml"
   sed -i 's/80:80/8080:80/' docker-compose.yml
