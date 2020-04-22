@@ -4,7 +4,7 @@ source scripts/_functions.sh
 
 echo "OVERRIDE SET TO $OVERRIDE_CONFIRM"
 
-if [[ -n $(confirm "Do you want to reset and configure the dev environment?") ]]; then
+if [[ -z $(confirm "Do you want to reset and configure the dev environment?") ]]; then
   echo "Bailing from reset"
 else
   echo "Waiting for postgres to be up and running."
