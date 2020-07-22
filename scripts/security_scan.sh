@@ -2,13 +2,15 @@
 
 source scripts/_functions.sh
 
-OPEN_API_SPEC_JSON=$(cat "$DIR/../../epb-register-api/config/apidoc.yml" | y2j)
+OPEN_API_SPEC_JSON=$(cat "$DIR/../../epb-register-api/api/api.yml" | y2j)
 
 LOCAL_TESTING_API_SPEC=$(echo "$OPEN_API_SPEC_JSON" | jq '.servers = [{"url":"http://epb-register-api/api", "description": "Local Testing Server"}]')
 
 echo "$LOCAL_TESTING_API_SPEC" > "$DIR/../http_files/api-spec.json"
 
 PROXY_SERVER_IP=$(docker inspect epb-dev-tools_epb-proxy_1 | jq -r '.[0].NetworkSettings.Networks["epb-dev-tools_default"].IPAddress')
+
+SCAN_DATE=$(date +%s)
 
 if [ ! -d "$DIR/../security-reports" ]; then mkdir -p "$DIR/../security-reports"; fi
 
@@ -21,7 +23,8 @@ docker run -it \
   owasp/zap2docker-stable \
   zap-baseline.py \
   -t http://epb-frontend/ \
-  -w "$(date +%s)-frontend-report.md"
+  -r "$SCAN_DATE-frontend-report.html" \
+  -w "$SCAN_DATE-frontend-report.md"
 
 echo -e "-> Running api scan against the api using the api spec";
 
@@ -35,7 +38,8 @@ docker run -it \
   zap-api-scan.py \
   -t http://epb-register-api/test_files/api-spec.json \
   -f openapi \
-  -w "$(date +%s)-api-report.md" \
+  -r "$SCAN_DATE-api-report.html" \
+  -w "$SCAN_DATE-api-report.md" \
   -z "-config replacer.full_list(0).description=oauth
   -config replacer.full_list(0).enabled=true
   -config replacer.full_list(0).matchtype=REQ_HEADER
