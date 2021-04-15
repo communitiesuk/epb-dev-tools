@@ -3,3 +3,4 @@ docker-compose.yml
 http_files/*
 !http_files/.gitkeep
 security-reports/
+.idea

@@ -83,3 +83,19 @@ Register
 * The register api - found at http://epb-register-api
 * The register's authentication service - found at http://epb-register-api/auth
 * The register's frontend service - found at http://epb-frontend
+
+### Make File
+
+The `make migrate` command migrates a database for a particular application. 
+If you get an error saying that a database table is missing for a particular application
+then running this command should regenerate the database & its tables for you.
+
+If you encounter this warning when trying to run the command 
+
+`Must give an application   EPB Devtools Help` 
+
+then please use this alternative syntax: 
+
+` make migrate APP=<particular_application>`
+
+Eg: make migrate APP=epb-register-api
