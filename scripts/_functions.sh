@@ -231,7 +231,7 @@ setup_hostsfile() {
 }
 
 setup_bash_profile() {
-  ALIAS_INFO="alias epb=\"$DIR/epb\""
+  ALIAS_INFO="alias epb=\"$DIR/../epb\""
 
   if [[ -f "$HOME/.zshrc" ]]; then
     if [[ -n $(confirm "Add epb to profile at ~/.zshrc?") ]]; then
