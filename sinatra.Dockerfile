@@ -1,4 +1,4 @@
-FROM ruby:2.6.6-stretch
+FROM ruby:2.7.3
 
 ENV LANG=en_GB.UTF-8
 
@@ -11,7 +11,7 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -; \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN gem install bundler -v '2.1.4' && \
+RUN gem install bundler -v '2.2.16' && \
     gem install rerun
 
 COPY . /app
