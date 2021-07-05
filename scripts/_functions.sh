@@ -125,7 +125,7 @@ services:
       EPB_UNLEASH_URI: http://epb-feature-flag/
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
-      STAGE: production
+      STAGE: development
     links:
       - epb-auth-server
       - epb-feature-flag
@@ -167,7 +167,7 @@ services:
       EPB_UNLEASH_URI: http://epb-feature-flag/
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
-      STAGE: production
+      STAGE: development
     links:
       - epb-feature-flag
       - epb-register-api-db
