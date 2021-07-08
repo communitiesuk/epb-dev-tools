@@ -43,3 +43,6 @@ help:
 security-scan:
 	@echo "Running ZAP scan"
 	@$(SHELL) scripts/security_scan.sh
+
+lodge-assessments: ## run rake to save xml fixtures to docker db
+		@docker-compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake lodge_dev_assessments'
