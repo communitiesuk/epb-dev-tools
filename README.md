@@ -100,7 +100,7 @@ then please use this alternative syntax:
 
 Eg: make migrate APP=epb-register-api
 
-To add test assessments into your docker database, first ensure you have the latest version of the 'The register api', then run the command
+To add test assessments into your docker database, first ensure you have the latest version of the the register api , then run the command:
 
 `  make lodge-assessments`
 
