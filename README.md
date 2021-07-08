@@ -99,3 +99,11 @@ then please use this alternative syntax:
 ` make migrate APP=<particular_application>`
 
 Eg: make migrate APP=epb-register-api
+
+To add test assessments into your docker database, first ensure you have the latest version of the 'The register api', then run the command
+
+`  make lodge-assessments`
+
+This lodges a single assessment for 6 main certificate types.
+Each assessment is lodged against a test assessor 'RAKE000001' and the new assessment IDs are printed to STDOUT.
+
