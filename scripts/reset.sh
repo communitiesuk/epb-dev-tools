@@ -21,7 +21,6 @@ else
 
   echo "Setting up Register API"
   docker-compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
-  docker-compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production bundle exec rake tasks:all'
 
   echo "Setting up Frontend"
   docker-compose exec -T epb-frontend bash -c 'cd /app && npm install && make frontend-build'
