@@ -107,3 +107,16 @@ To add test assessments into your docker database, first ensure you have the lat
 This lodges a single assessment for 6 main certificate types.
 Each assessment is lodged against a test assessor 'RAKE000001' and the new assessment IDs are printed to STDOUT.
 
+## Running the security scan
+
+**Additional requirements**
+
+* jq (`brew install jq`)
+* [y2j](https://github.com/bronze1man/yaml2json)
+  Follow the installation instructions, but on a Mac you might additionally need to `cat ~/Downloads/yaml2json_darwin_amd64 > /usr/local/bin/y2j` on a Mac to avoid it being blocked
+
+With these additional packages installed you can then run a Zap scan of the API and frontend apps using
+
+```bash
+$ make security-scan
+```
