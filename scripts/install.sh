@@ -13,9 +13,13 @@ EPB_AUTH_SERVER_PATH="$(printf "%q" "$CODEBASE_PATH")"
 clone_application "EPB Register API" "https://github.com/communitiesuk/epb-register-api.git"
 EPB_REGISTER_API_PATH="$(printf "%q" "$CODEBASE_PATH")"
 
+clone_application "EPB Data Warehouse" "https://github.com/communitiesuk/epb-data-warehouse.git"
+EPB_REGISTER_API_PATH="$(printf "%q" "$CODEBASE_PATH")"
+
 EPB_FRONTEND_PATH=$EPB_FRONTEND_PATH \
 EPB_AUTH_SERVER_PATH=$EPB_AUTH_SERVER_PATH \
 EPB_REGISTER_API_PATH=$EPB_REGISTER_API_PATH \
+EPB_DATA_WAREHOUSE_PATH=$EPB_DATA_WAREHOUSE_PATH \
 generate_template
 
 # Are we running in vagrant?
