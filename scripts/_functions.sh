@@ -167,10 +167,12 @@ services:
       EPB_UNLEASH_URI: http://epb-feature-flag/
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
+      REDIS_URL: redis://redis
       STAGE: development
     links:
       - epb-feature-flag
       - epb-register-api-db
+      - redis
     volumes:
       - ${EPB_REGISTER_API_PATH}:/app
 
@@ -183,6 +185,9 @@ services:
       POSTGRES_USER: epb
     volumes:
       - register-api:/var/lib/postgresql/data
+
+  redis:
+    image: redis
 
   epb-feature-flag:
     environment:
