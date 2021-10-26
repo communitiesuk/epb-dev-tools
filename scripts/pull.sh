@@ -12,3 +12,6 @@ pull_application "git@github.com:communitiesuk/epb-auth-server.git"
 
 echo "EPB Register API"
 pull_application "git@github.com:communitiesuk/epb-register-api.git"
+
+echo "EPB Data Warehouse"
+pull_application "git@github.com:communitiesuk/epb-data-warehouse.git"
