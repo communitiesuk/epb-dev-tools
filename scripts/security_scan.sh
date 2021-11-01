@@ -2,7 +2,7 @@
 
 source scripts/_functions.sh
 
-OPEN_API_SPEC_JSON=$(cat "$DIR/../../epb-register-api/api/api.yml" | y2j)
+OPEN_API_SPEC_JSON=$(cat "$DIR/../../epb-register-api/api/api.yml" | yq eval -o=j)
 
 LOCAL_TESTING_API_SPEC=$(echo "$OPEN_API_SPEC_JSON" | jq '.servers = [{"url":"http://epb-register-api/api", "description": "Local Testing Server"}]')
 

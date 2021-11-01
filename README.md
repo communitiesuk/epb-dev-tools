@@ -112,8 +112,7 @@ Each assessment is lodged against a test assessor 'RAKE000001' and the new asses
 **Additional requirements**
 
 * jq (`brew install jq`)
-* [y2j](https://github.com/bronze1man/yaml2json)
-  Follow the installation instructions, but on a Mac you might additionally need to `cat ~/Downloads/yaml2json_darwin_amd64 > /usr/local/bin/y2j` on a Mac to avoid it being blocked
+* yq (`brew install yq`)
 
 With these additional packages installed you can then run a Zap scan of the API and frontend apps using
 
