@@ -28,17 +28,13 @@ clone_application() {
 
   printf "%s\n" "$HELP_TEXT"
 
-  if [[ -z $(confirm "Clone to $CLONE_DIR?") ]]; then
-    CODEBASE_PATH=""
-  else
-    CODEBASE_PATH="$CLONE_DIR"
+  CODEBASE_PATH="$CLONE_DIR"
 
-    if [[ ! -d $CODEBASE_PATH ]]; then
-      echo -e "Cloning into local directory $CODEBASE_PATH\n"
-      git clone "$CLONE_URL" "$CLONE_DIR"
-    else
-      echo -e "Directory $CODEBASE_PATH already exists, continuing\n"
-    fi
+  if [[ ! -d $CODEBASE_PATH ]]; then
+    echo -e "Cloning into local directory $CODEBASE_PATH\n"
+    git clone "$CLONE_URL" "$CLONE_DIR"
+  else
+    echo -e "Directory $CODEBASE_PATH already exists, continuing\n"
   fi
 
   if [[ -z $CODEBASE_PATH ]]; then
@@ -210,7 +206,7 @@ services:
       POSTGRES_USER: unleashed
     volumes:
       - feature-flag:/var/lib/postgresql/data
-  
+
   epb-data-warehouse:
     build:
       context: ${EPB_DATA_WAREHOUSE_PATH}
@@ -227,7 +223,7 @@ services:
       STAGE: development
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
-  
+
   epb-data-warehouse-db:
     build:
       context: ${PWD}/
@@ -237,7 +233,7 @@ services:
       POSTGRES_USER: epb
     volumes:
       - data-warehouse:/var/lib/postgresql/data
-    
+
 
 
 volumes:
