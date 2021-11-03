@@ -28,4 +28,7 @@ else
 
   echo "Setting up Frontend"
   docker-compose exec -T epb-frontend bash -c 'cd /app && npm install && make frontend-build'
+
+  echo "Setting up Data Warehouse"
+  docker-compose exec -T epb-data-warehouse bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate || bundle exec rake db:setup'
 fi
