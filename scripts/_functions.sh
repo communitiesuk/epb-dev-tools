@@ -161,12 +161,14 @@ services:
     environment:
       DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
       EPB_UNLEASH_URI: http://epb-feature-flag/
+      EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
     links:
       - epb-feature-flag
       - epb-register-api-db
+      - epb-data-warehouse-queues
     volumes:
       - ${EPB_REGISTER_API_PATH}:/app
 
@@ -179,6 +181,9 @@ services:
       POSTGRES_USER: epb
     volumes:
       - register-api:/var/lib/postgresql/data
+
+  epb-data-warehouse-queues:
+    image: redis
 
   epb-feature-flag:
     environment:
@@ -214,6 +219,7 @@ services:
     environment:
       DATABASE_URL: postgresql://epb:SecretWarehousePassword@epb-data-warehouse-db/epb
       EPB_API_URL: http://epb-register-api
+      EPB_QUEUES_URI: redis://epb-data-warehouse-queues
       EPB_AUTH_CLIENT_ID: 5e7b7607-971b-45a4-9155-cb4f6ea7e9f5
       EPB_AUTH_CLIENT_SECRET: data-warehouse-secret
       EPB_AUTH_SERVER: http://epb-auth-server/auth
@@ -223,6 +229,7 @@ services:
       STAGE: development
     links:
       - epb-data-warehouse-db
+      - epb-data-warehouse-queues
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
 
