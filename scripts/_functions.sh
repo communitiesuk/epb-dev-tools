@@ -221,6 +221,8 @@ services:
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
+    links:
+      - epb-data-warehouse-db
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
 
