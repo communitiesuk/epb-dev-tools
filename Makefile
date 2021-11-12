@@ -21,7 +21,7 @@ pull: ## git pull in all repositories
 	@$(SHELL) scripts/pull.sh
 
 sql: ## open an sql shell in the given application
-	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fiy
+	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
 	@$(SHELL) scripts/sql.sh
 
 migrate: ## run migrations (epb migrate epb-auth-server)
