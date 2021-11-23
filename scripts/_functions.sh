@@ -233,6 +233,7 @@ services:
       JWT_SECRET: test-jwt-secret
       STAGE: development
     links:
+      - epb-feature-flag
       - epb-data-warehouse-db
       - epb-data-warehouse-queues
     volumes:
