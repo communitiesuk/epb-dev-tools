@@ -119,7 +119,7 @@ services:
       EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
       EPB_AUTH_CLIENT_SECRET: test-client-secret
       EPB_AUTH_SERVER: http://epb-auth-server/auth
-      EPB_UNLEASH_URI: http://epb-feature-flag/
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
@@ -228,7 +228,7 @@ services:
       EPB_AUTH_CLIENT_ID: 5e7b7607-971b-45a4-9155-cb4f6ea7e9f5
       EPB_AUTH_CLIENT_SECRET: data-warehouse-secret
       EPB_AUTH_SERVER: http://epb-auth-server/auth
-      EPB_UNLEASH_URI: http://epb-feature-flag/
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
