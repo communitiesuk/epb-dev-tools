@@ -104,6 +104,7 @@ services:
       - epb-auth-server
       - epb-register-api
       - epb-frontend
+      - epb-feature-flag
     ports:
       - "80:80"
     volumes:
@@ -160,7 +161,7 @@ services:
       dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
       DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
-      EPB_UNLEASH_URI: http://epb-feature-flag/
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
       EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
@@ -186,20 +187,24 @@ services:
     image: redis
 
   epb-feature-flag:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/unleash.Dockerfile
     environment:
       DATABASE_URL: postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed
+      DATABASE_SSL: "false"
       HTTP_HOST: 0.0.0.0
       HTTP_PORT: 80
-    image: unleashorg/unleash-server:3.1
     links:
       - epb-feature-flag-db
     command: >
       sh -c "
         while ! nc -z epb-feature-flag-db 5432; do
-          echo 'Postgres is unavailable.'
+          echo 'Postgres is unavailable - trying again in 1s...'
           sleep 1
         done
         sleep 10
+        echo 'Starting Unleash...'
         npm run start"
 
   epb-feature-flag-db:
@@ -255,7 +260,7 @@ EOF
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend epb-frontend epb-register-api epb-auth-server"
+  HOSTS_LINE="127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend epb-frontend epb-register-api epb-auth-server epb-feature-flag"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"
