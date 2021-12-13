@@ -203,7 +203,7 @@ services:
           echo 'Postgres is unavailable - trying again in 1s...'
           sleep 1
         done
-        sleep 10
+        sleep 1
         echo 'Starting Unleash...'
         npm run start"
 
