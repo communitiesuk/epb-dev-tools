@@ -222,7 +222,7 @@ services:
       context: ${EPB_DATA_WAREHOUSE_PATH}
       dockerfile: ${PWD}/dataWarehouse.Dockerfile
     environment:
-      DATABASE_URL: postgresql://epb:SecretWarehousePassword@epb-data-warehouse-db/epb
+      DATABASE_URL: postgresql://epb:SecretWarehousePassword@epb-data-warehouse-db/epb?pool=50
       EPB_API_URL: http://epb-register-api
       EPB_QUEUES_URI: redis://epb-data-warehouse-queues
       EPB_AUTH_CLIENT_ID: 5e7b7607-971b-45a4-9155-cb4f6ea7e9f5
