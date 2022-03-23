@@ -205,7 +205,7 @@ services:
         done
         sleep 1
         echo 'Starting Unleash...'
-        npm run start"
+        yarn run start"
 
   epb-feature-flag-db:
     build:

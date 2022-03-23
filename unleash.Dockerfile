@@ -1,3 +1,3 @@
-FROM unleashorg/unleash-server:4.2.3
+FROM unleashorg/unleash-server:4.8.2-node16-alpine
 
 COPY ./unleash.js index.js
