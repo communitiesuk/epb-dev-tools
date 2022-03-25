@@ -140,6 +140,7 @@ services:
       JWT_SECRET: test-jwt-secret
       URL_PREFIX: /auth
       RACK_ENV: development
+      STAGE: development
     links:
       - epb-auth-server-db
     volumes:
