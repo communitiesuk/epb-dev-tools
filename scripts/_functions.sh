@@ -196,6 +196,8 @@ services:
       DATABASE_SSL: "false"
       HTTP_HOST: 0.0.0.0
       HTTP_PORT: 80
+      TOGGLES_USERNAME: epbr
+      TOGGLES_PASSWORD: epbr
     links:
       - epb-feature-flag-db
     command: >

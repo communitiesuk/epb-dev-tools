@@ -1,11 +1,20 @@
-'use strict';
+require('dotenv').config()
 
-const unleash = require('unleash-server');
+const unleash = require('unleash-server')
+const myCustomAdminAuth = require('./unleash-auth-hook')
 
-let options = {
+unleash
+  .start({
+    databaseUrl: process.env.DATABASE_URL,
+    port: '8080',
+    secret: process.env.TOGGLES_SECRET,
     authentication: {
-        type: "none"
+      type: 'custom',
+      customAuthHandler: myCustomAdminAuth
     }
-};
-
-unleash.start(options);
+  })
+  .then(unleash => {
+    console.log(
+      'Started'
+    )
+  })
