@@ -113,7 +113,7 @@ services:
   epb-frontend:
     build:
       context: ${EPB_FRONTEND_PATH}
-      dockerfile: ${PWD}/sinatra.Dockerfile
+      dockerfile: ${PWD}/sinatra-31.Dockerfile
     environment:
       EPB_API_URL: http://epb-register-api
       EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
