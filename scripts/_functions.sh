@@ -133,7 +133,7 @@ services:
   epb-auth-server:
     build:
       context: ${EPB_AUTH_SERVER_PATH}
-      dockerfile: ${PWD}/sinatra.Dockerfile
+      dockerfile: ${PWD}/sinatra-31.Dockerfile
     environment:
       DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-auth-server-db/epb
       JWT_ISSUER: epb-auth-server
