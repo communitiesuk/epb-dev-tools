@@ -1,4 +1,4 @@
-FROM ruby:2.7.5
+FROM ruby:3.1.2
 
 ENV LANG=en_GB.UTF-8
 
@@ -9,7 +9,7 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -; \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN gem install bundler -v '2.2.32' && \
+RUN gem install bundler -v '2.3.15' && \
     gem install rerun
 
 COPY . /app

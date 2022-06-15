@@ -113,7 +113,7 @@ services:
   epb-frontend:
     build:
       context: ${EPB_FRONTEND_PATH}
-      dockerfile: ${PWD}/sinatra-31.Dockerfile
+      dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
       EPB_API_URL: http://epb-register-api
       EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
@@ -133,7 +133,7 @@ services:
   epb-auth-server:
     build:
       context: ${EPB_AUTH_SERVER_PATH}
-      dockerfile: ${PWD}/sinatra-31.Dockerfile
+      dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
       DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-auth-server-db/epb
       JWT_ISSUER: epb-auth-server
