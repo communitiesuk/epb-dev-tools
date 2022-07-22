@@ -264,7 +264,7 @@ EOF
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend epb-frontend epb-register-api epb-auth-server epb-feature-flag"
+  HOSTS_LINE="127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"
