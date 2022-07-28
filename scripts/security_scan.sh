@@ -10,7 +10,7 @@ echo "$LOCAL_TESTING_API_SPEC" > "$DIR/../http_files/api-spec.json"
 
 PROXY_SERVER_IP=$(docker inspect epb-dev-tools-epb-proxy-1 | jq -r '.[0].NetworkSettings.Networks["epb-dev-tools_default"].IPAddress')
 
-SCAN_DATE=$(date +%s)
+SCAN_DATE=$(date +%F_%H%M)
 
 if [ ! -d "$DIR/../security-reports" ]; then mkdir -p "$DIR/../security-reports"; fi
 
@@ -18,11 +18,11 @@ echo -e "-> Running baseline scan against the front end application";
 
 docker run -it \
   --network=epb-dev-tools_default \
-  --add-host=epb-frontend:$PROXY_SERVER_IP \
+  --add-host=find-energy-certificate.epb-frontend:$PROXY_SERVER_IP \
   --volume=$DIR/../security-reports:/zap/wrk  \
   owasp/zap2docker-stable \
   zap-baseline.py \
-  -t http://epb-frontend/ \
+  -t http://find-energy-certificate.epb-frontend/ \
   -r "$SCAN_DATE-frontend-report.html" \
   -w "$SCAN_DATE-frontend-report.md"
 
