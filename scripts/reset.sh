@@ -8,13 +8,13 @@ if [[ -z $(confirm "Do you want to reset and configure the dev environment?") ]]
   echo "Bailing from reset"
 else
   echo "Waiting for postgres to be up and running"
-  until_accepting_connections "epb-dev-tools-epb-auth-server-db-1"
+  until_accepting_connections "epb-dev-tools_epb-auth-server-db_1"
   echo "Auth DB OK"
-  until_accepting_connections "epb-dev-tools-epb-feature-flag-db-1"
+  until_accepting_connections "epb-dev-tools_epb-feature-flag-db_1"
   echo "Toggles DB OK"
-  until_accepting_connections "epb-dev-tools-epb-register-api-db-1"
+  until_accepting_connections "epb-dev-tools_epb-register-api-db_1"
   echo "API DB OK"
-  until_accepting_connections "epb-dev-tools-epb-data-warehouse-db-1"
+  until_accepting_connections "epb-dev-tools_epb-data-warehouse-db_1"
   echo "Data warehouse DB OK"
 
   # Setup db and other essentials
