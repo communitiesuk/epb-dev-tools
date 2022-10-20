@@ -95,6 +95,25 @@ generate_template() {
   rm -r docker-compose.yml 2>/dev/null
   cat <<EOF > docker-compose.yml
 version: '3.7'
+
+x-api-app: &api-app
+  environment:
+    DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
+    EPB_UNLEASH_URI: http://epb-feature-flag/api
+    EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
+    EPB_WORKER_REDIS_URI: redis://epb-register-api-worker-redis
+    JWT_ISSUER: epb-auth-server
+    JWT_SECRET: test-jwt-secret
+    STAGE: development
+    VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.0.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-20.0.0,RdSAP-Schema-NI-20.0.0
+    VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0
+  links:
+    - epb-feature-flag
+    - epb-register-api-db
+    - epb-data-warehouse-queues
+  volumes:
+    - /Users/douglas.greenshields/Projects/mhclg/epb-register-api:/app
+
 services:
   epb-proxy:
     build:
@@ -157,24 +176,10 @@ services:
       - auth-server:/var/lib/postgresql/data
 
   epb-register-api:
+    <<: *api-app
     build:
-      context: ${EPB_REGISTER_API_PATH}
-      dockerfile: ${PWD}/sinatra.Dockerfile
-    environment:
-      DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
-      EPB_UNLEASH_URI: http://epb-feature-flag/api
-      EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
-      JWT_ISSUER: epb-auth-server
-      JWT_SECRET: test-jwt-secret
-      STAGE: development
-      VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.0.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-20.0.0,RdSAP-Schema-NI-20.0.0
-      VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0
-    links:
-      - epb-feature-flag
-      - epb-register-api-db
-      - epb-data-warehouse-queues
-    volumes:
-      - ${EPB_REGISTER_API_PATH}:/app
+      context: /Users/douglas.greenshields/Projects/mhclg/epb-register-api
+      dockerfile: /Users/douglas.greenshields/Projects/mhclg/epb-dev-tools/sinatra.Dockerfile
 
   epb-register-api-db:
     build:
@@ -185,6 +190,15 @@ services:
       POSTGRES_USER: epb
     volumes:
       - register-api:/var/lib/postgresql/data
+
+  epb-register-api-worker:
+    <<: *api-app
+    build:
+      context: /Users/douglas.greenshields/Projects/mhclg/epb-register-api
+      dockerfile: /Users/douglas.greenshields/Projects/mhclg/epb-dev-tools/sidekiq.Dockerfile
+
+  epb-register-api-worker-redis:
+    image: redis
 
   epb-data-warehouse-queues:
     image: redis
