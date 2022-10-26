@@ -112,7 +112,7 @@ x-api-app: &api-app
     - epb-register-api-db
     - epb-data-warehouse-queues
   volumes:
-    - /Users/douglas.greenshields/Projects/mhclg/epb-register-api:/app
+    - ${EPB_REGISTER_API_PATH}:/app
 
 services:
   epb-proxy:
@@ -178,8 +178,8 @@ services:
   epb-register-api:
     <<: *api-app
     build:
-      context: /Users/douglas.greenshields/Projects/mhclg/epb-register-api
-      dockerfile: /Users/douglas.greenshields/Projects/mhclg/epb-dev-tools/sinatra.Dockerfile
+      context: ${EPB_REGISTER_API_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
 
   epb-register-api-db:
     build:
@@ -194,8 +194,8 @@ services:
   epb-register-api-worker:
     <<: *api-app
     build:
-      context: /Users/douglas.greenshields/Projects/mhclg/epb-register-api
-      dockerfile: /Users/douglas.greenshields/Projects/mhclg/epb-dev-tools/sidekiq.Dockerfile
+      context: ${EPB_REGISTER_API_PATH}
+      dockerfile: ${PWD}/sidekiq.Dockerfile
 
   epb-register-api-worker-redis:
     image: redis
