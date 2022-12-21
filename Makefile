@@ -50,3 +50,10 @@ security-scan:
 
 lodge-assessments: ## run rake to save xml fixtures to docker db
 		@docker-compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake dev_data:lodge_dev_assessments'
+
+load-local-data:
+		@docker-compose up  -d --force-recreate --build epb-register-api-db
+	  @docker-compose up  -d --force-recreate --build epb-data-warehouse-db
+		@docker-compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake db:migrate'
+		@docker-compose exec -T epb-register-api bash -c 'cd /app && make seed-local-db'
+
