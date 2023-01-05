@@ -96,16 +96,15 @@ If you encounter this warning when trying to run the command
 
 then please use this alternative syntax:
 
-` make migrate APP=<particular_application>`
+`make migrate APP=<particular_application>`
 
 Eg: make migrate APP=epb-register-api
 
-To add test assessments into your docker database, first ensure you have the latest version of the the register api , then run the command:
+To add test assessments into your database and data warehouse in docker, first ensure you have the latest version of the the register api, then run the command:
 
-`  make lodge-assessments`
+`make load-local-data`
 
-This lodges a single assessment for 6 main certificate types.
-Each assessment is lodged against a test assessor 'RAKE000001' and the new assessment IDs are printed to STDOUT.
+This lodges 63 different assessments, from varying schemas with different energy ratings.
 
 ## Running the security scan
 
