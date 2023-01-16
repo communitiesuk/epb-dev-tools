@@ -158,10 +158,12 @@ services:
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       URL_PREFIX: /auth
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
       RACK_ENV: development
       STAGE: development
     links:
       - epb-auth-server-db
+      - epb-feature-flag
     volumes:
       - ${EPB_AUTH_SERVER_PATH}:/app
 
