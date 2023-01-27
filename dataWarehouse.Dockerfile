@@ -4,7 +4,7 @@ ENV LANG=en_GB.UTF-8
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -; \
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -; \
     apt-get update -qq && apt-get install -qq --no-install-recommends nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
