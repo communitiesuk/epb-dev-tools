@@ -8,9 +8,11 @@ LOCAL_TESTING_API_SPEC=$(echo "$OPEN_API_SPEC_JSON" | jq '.servers = [{"url":"ht
 
 echo "$LOCAL_TESTING_API_SPEC" > "$DIR/../http_files/api-spec.json"
 
-PROXY_SERVER_CONTAINER=$(docker container ls --format json | jq -rs '.[] | select(.Names|contains("epb-proxy")) | .Names')
+PROXY_SERVER_CONTAINER=$(docker container ls --format "{{json . }}" | jq -rs '.[] | select(.Names|contains("epb-proxy")) | .Names')
+echo "Found proxy server: $PROXY_SERVER_CONTAINER"
 
 PROXY_SERVER_IP=$(docker inspect $PROXY_SERVER_CONTAINER | jq -r '.[0].NetworkSettings.Networks["epb-dev-tools_default"].IPAddress')
+echo "Found proxy server IP: $PROXY_SERVER_IP"
 
 SCAN_DATE=$(date +%F_%H%M)
 

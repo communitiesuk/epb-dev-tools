@@ -321,5 +321,5 @@ setup_bash_profile() {
 
 until_accepting_connections() {
   CONTAINER_NAME=$1
-  until docker run --rm --network epb-dev-tools_default --link "$CONTAINER_NAME:pg" postgres:11 pg_isready -U postgres -h pg; do sleep 1; done
+  until docker run --rm --network epb-dev-tools-default --link "$CONTAINER_NAME:pg" postgres:11 pg_isready -U postgres -h pg; do sleep 1; done
 }
