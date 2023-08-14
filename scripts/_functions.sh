@@ -105,7 +105,7 @@ x-api-app: &api-app
     JWT_ISSUER: epb-auth-server
     JWT_SECRET: test-jwt-secret
     STAGE: development
-    VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.0.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-20.0.0,RdSAP-Schema-NI-20.0.0
+    VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.1.0,SAP-Schema-19.0.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-20.0.0,RdSAP-Schema-NI-20.0.0
     VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0
   links:
     - epb-feature-flag
