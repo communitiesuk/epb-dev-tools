@@ -18,4 +18,4 @@ RUN cd /app && bundle install
 
 RUN rm -rf /app
 
-ENTRYPOINT bash -c 'cd /app && bundle exec ruby app.rb'
+ENTRYPOINT bash -c 'cd /app && bundle exec rake'
