@@ -101,7 +101,6 @@ x-api-app: &api-app
     DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
     EPB_UNLEASH_URI: http://epb-feature-flag/api
     EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
-    EPB_WORKER_REDIS_URI: redis://epb-register-api-worker-redis
     JWT_ISSUER: epb-auth-server
     JWT_SECRET: test-jwt-secret
     STAGE: development
@@ -192,15 +191,6 @@ services:
       POSTGRES_USER: epb
     volumes:
       - register-api:/var/lib/postgresql/data
-
-  epb-register-api-worker:
-    <<: *api-app
-    build:
-      context: ${EPB_REGISTER_API_PATH}
-      dockerfile: ${PWD}/sidekiq.Dockerfile
-
-  epb-register-api-worker-redis:
-    image: redis
 
   epb-data-warehouse-queues:
     image: redis
