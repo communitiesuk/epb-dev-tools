@@ -58,6 +58,16 @@ services:
     volumes:
       - auth-server:/var/lib/postgresql/data
 
+  epb-data-warehouse-api:
+    build:
+      context: ${EPB_DATA_WAREHOUSE_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+    volumes:
+      - ${EPB_DATA_WAREHOUSE_PATH}:/app
+
   epb-register-api:
     build:
       context: ${EPB_REGISTER_API_PATH}

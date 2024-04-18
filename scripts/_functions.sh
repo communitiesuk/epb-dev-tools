@@ -258,6 +258,16 @@ services:
     volumes:
       - data-warehouse:/var/lib/postgresql/data
 
+  epb-data-warehouse-api:
+    build:
+      context: ${EPB_DATA_WAREHOUSE_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+    volumes:
+      - ${EPB_DATA_WAREHOUSE_PATH}:/app
+
 
 
 volumes:
@@ -270,7 +280,7 @@ EOF
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag"
+  HOSTS_LINE="127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"
@@ -311,5 +321,5 @@ setup_bash_profile() {
 
 until_accepting_connections() {
   CONTAINER_NAME=$1
-  until docker run --rm --network epb-dev-tools-default --link "$CONTAINER_NAME:pg" postgres:11 pg_isready -U postgres -h pg; do sleep 1; done
+  until docker run --rm --network epb-dev-tools_default --link "$CONTAINER_NAME:pg" postgres:11 pg_isready -U postgres -h pg; do sleep 1; done
 }
