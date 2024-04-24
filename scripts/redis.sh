@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-docker-compose \
+docker compose \
 exec "$APP" \
 bash -c "redis-cli"

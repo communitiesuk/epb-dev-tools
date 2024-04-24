@@ -3,5 +3,5 @@
 source scripts/_functions.sh
 
 if [[ -n $(confirm "Do you want to pause the dev environment?") ]]; then
-  cd "$DIR/.." && docker-compose pause
+  cd "$DIR/.." && docker compose pause
 fi

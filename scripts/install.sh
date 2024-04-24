@@ -34,7 +34,7 @@ if [[ "$USER" = "root" ]]; then
   sudo sed -i 's#proxy_pass http://epb-auth-server/auth/;#proxy_pass http://epb-auth-server:8080/auth/;#' /etc/nginx/conf.d/default.conf
   sudo sed -i 's#proxy_pass http://epb-register-api/;#proxy_pass http://epb-register-api:8080/;#' /etc/nginx/conf.d/default.conf
 
-  docker-compose up -d
+  docker compose up -d
 else
   bash scripts/rebuild.sh
 fi

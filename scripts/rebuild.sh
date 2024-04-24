@@ -1,4 +1,4 @@
-docker-compose exec epb-register-api bash#!/usr/bin/env bash
+docker compose exec epb-register-api bash#!/usr/bin/env bash
 
 source scripts/_functions.sh
 
@@ -8,8 +8,8 @@ if [[ -z $(confirm "Do you want to rebuild the dev environment?") ]]; then
   echo "Bailing from rebuild"
 else
   # Ensure images are built
-  docker-compose down
-  docker-compose rm -f
-  docker-compose build
-  docker-compose up -d
+  docker compose down
+  docker compose rm -f
+  docker compose build
+  docker compose up -d
 fi

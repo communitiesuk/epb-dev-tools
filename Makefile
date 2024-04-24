@@ -30,14 +30,14 @@ redis: ## open a redis-cli session on the given container
 
 migrate: ## run migrations (epb migrate epb-auth-server)
 	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
-	@docker-compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:migrate'
+	@docker compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:migrate'
 
 rollback: ## rollback migrations (epb rollback epb-auth-server)
 	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
-	@docker-compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:rollback'
+	@docker compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:rollback'
 
 logs: ## tail container(s) logs (epb logs epb-auth-server)
-	@docker-compose logs -f ${APP}
+	@docker compose logs -f ${APP}
 
 help:
 	@echo "EPB Devtools Help"
@@ -49,11 +49,11 @@ security-scan:
 	@$(SHELL) scripts/security_scan.sh
 
 lodge-assessments: ## run rake to save xml fixtures to docker db
-		@docker-compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake dev_data:lodge_dev_assessments'
+		@docker compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake dev_data:lodge_dev_assessments'
 
 load-local-data:
-		@docker-compose up  -d --force-recreate --build epb-register-api-db
-	  @docker-compose up  -d --force-recreate --build epb-data-warehouse-db
-		@docker-compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake db:migrate'
-		@docker-compose exec -T epb-register-api bash -c 'cd /app && make seed-local-db'
+		@docker compose up  -d --force-recreate --build epb-register-api-db
+		@docker compose up  -d --force-recreate --build epb-data-warehouse-db
+		@docker compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake db:migrate'
+		@docker compose exec -T epb-register-api bash -c 'cd /app && make seed-local-db'
 

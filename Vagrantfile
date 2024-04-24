@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
     cd /home/vagrant/code/epb-dev-tools
     OVERRIDE_CONFIRM=true make install
 
-    docker-compose down
+    docker compose down
     cp epb.service /etc/systemd/system/epb.service
     chmod 644 /etc/systemd/system/epb.service
     systemctl enable epb
