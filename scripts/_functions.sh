@@ -94,8 +94,6 @@ get_parent_directory() {
 generate_template() {
   rm -r docker-compose.yml 2>/dev/null
   cat <<EOF > docker-compose.yml
-version: '3.7'
-
 x-api-app: &api-app
   environment:
     DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
