@@ -190,7 +190,7 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb
     volumes:
-      - register-api:/var/lib/postgresql/data
+      - register-api:/var/lib/postgresql@$POSTGRES_VERSION/data
 
   epb-data-warehouse-queues:
     image: redis
