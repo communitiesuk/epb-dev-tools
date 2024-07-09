@@ -35,6 +35,7 @@ these steps:
         `MHCLG/epb-auth-server`
     4. `${EPB_REGISTER_API_PATH}` must be replaced with the FULL path to
         `MHCLG/epb-register-api`
+   5.  `${POSTGRES_VERSION}`  must be replaced with the specific version of postgres found in _epbDatabase.Dockerfile_
 7. From the directory `MHCLG/epb-dev-tools` run the following commands:
     1. `docker compose build` to build the docker images needed to run the tools
     2. `docker compose up -d` to bring up the infrastructure

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+POSTGRES_VERSION=14.10
 
 pull_application() {
   CLONE_URL=$1
@@ -173,7 +174,7 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb
     volumes:
-      - auth-server:/var/lib/postgresql/data
+      - auth-server:/var/lib/postgresql@$POSTGRES_VERSION/data
 
   epb-register-api:
     <<: *api-app
@@ -223,7 +224,7 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: unleashed
     volumes:
-      - feature-flag:/var/lib/postgresql/data
+      - feature-flag:/var/lib/postgresql@$POSTGRES_VERSION/data
 
   epb-data-warehouse:
     build:
@@ -255,7 +256,7 @@ services:
       POSTGRES_PASSWORD: SecretWarehousePassword
       POSTGRES_USER: epb
     volumes:
-      - data-warehouse:/var/lib/postgresql/data
+      - data-warehouse:/var/lib/postgresql@$POSTGRES_VERSION/data
 
   epb-data-warehouse-api:
     build:
@@ -324,5 +325,5 @@ setup_bash_profile() {
 
 until_accepting_connections() {
   CONTAINER_NAME=$1
-  until docker run --rm --network epb-dev-tools_default --link "$CONTAINER_NAME:pg" postgres:11 pg_isready -U postgres -h pg; do sleep 1; done
+  until docker run --rm --network epb-dev-tools_default --link "$CONTAINER_NAME:pg" postgres:$POSTGRES_VERSION pg_isready -U postgres -h pg; do sleep 1; done
 }
