@@ -55,5 +55,5 @@ load-local-data:
 		@docker compose up  -d --force-recreate --build epb-register-api-db
 		@docker compose up  -d --force-recreate --build epb-data-warehouse-db
 		@docker compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake db:migrate'
-		@docker compose exec -T epb-register-api bash -c 'cd /app && make seed-local-db'
+		@docker compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make seed-local-db'
 
