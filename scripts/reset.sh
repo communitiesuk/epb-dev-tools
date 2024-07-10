@@ -4,6 +4,10 @@ source scripts/_functions.sh
 
 echo "OVERRIDE SET TO $OVERRIDE_CONFIRM"
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+CLEAR='\033[0m' #
+
 if [[ -z $(confirm "Do you want to reset and configure the dev environment?") ]]; then
   echo "Bailing from reset"
 else
@@ -18,7 +22,7 @@ else
   echo "Data warehouse DB OK"
 
   # Setup db and other essentials
-  echo "Setting up Auth Server"
+  printf "$GREEN Setting up Auth Server $CLEAR \n"
   docker compose exec -T epb-auth-server bash -c 'cd /app && make db-setup'
   docker compose exec -T epb-auth-server-db bash -c "psql --username epb -d epb -c \"INSERT INTO clients (id, name, supplemental) VALUES ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'epb_frontend', '{\\\"scheme_ids\\\": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]}');\""
   docker compose exec -T epb-auth-server-db bash -c "psql --username epb -d epb -c \"INSERT INTO clients (id, name, supplemental) VALUES ('5e7b7607-971b-45a4-9155-cb4f6ea7e9f5', 'epb_data_warehouse', '{\\\"scheme_ids\\\": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]}');\""
@@ -27,12 +31,12 @@ else
   docker compose exec -T epb-auth-server-db bash -c "psql --username epb -d epb -c \"INSERT INTO client_scopes (client_id, scope) VALUES ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'scheme:create'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'scheme:list'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'scheme:assessor:list'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'scheme:assessor:update'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'scheme:assessor:fetch'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'assessment:fetch'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'assessment:lodge'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'assessment:search'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'assessor:search'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'address:search'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'migrate:assessment'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'migrate:assessor'),  ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'migrate:address'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'report:assessor:status'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'statistics:fetch'), ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'warehouse:read');\""
   docker compose exec -T epb-auth-server-db bash -c "psql --username epb -d epb -c \"INSERT INTO client_scopes (client_id, scope) VALUES ('5e7b7607-971b-45a4-9155-cb4f6ea7e9f5', 'assessment:fetch'), ('5e7b7607-971b-45a4-9155-cb4f6ea7e9f5', 'assessmentmetadata:fetch');\""
 
-  echo "Setting up Register API"
+  printf "$GREEN Setting up Register API $CLEAR \n"
   docker compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
 
-  echo "Setting up Frontend"
+  printf "$GREEN Setting up Frontend $CLEAR \n"
   docker compose exec -T epb-frontend bash -c 'cd /app && npm install && make frontend-build'
 
-  echo "Setting up Data Warehouse"
+  printf "$GREEN Setting up Data Warehouse $CLEAR \n"
   docker compose exec -T epb-data-warehouse bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate || bundle exec rake db:setup'
 fi
