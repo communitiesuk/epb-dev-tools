@@ -1,3 +1,3 @@
-FROM unleashorg/unleash-server:4.14.5
+FROM unleashorg/unleash-server:5.6.10
 
 COPY ./unleash.js index.js
