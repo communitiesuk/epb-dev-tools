@@ -84,6 +84,19 @@ Register
 * The register's authentication service - found at http://epb-register-api/auth
 * The register's frontend service - found at http://find-energy-certificate.epb-frontend and http://getting-new-energy-certificate.epb-frontend
 
+#### Toggles / Feature flags
+
+Before you use them, you will need to run some updates on the toggles database:
+
+* Go to the toggles / feature flag db container in docker desktop
+* Run `psql postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed`
+* Once you have connected to the database, run:
+```sql
+update environments set enabled = true, set protected = false where name = 'default';
+Insert into project_environments (project_id, environment_name) values ('default', 'default');
+```
+* You can now create toggles in the feature flags application found at http://epb-feature-flag/features
+
 ### Make File
 
 The `make migrate` command migrates a database for a particular application.
