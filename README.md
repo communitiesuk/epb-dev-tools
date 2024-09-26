@@ -92,7 +92,7 @@ Before you use them, you will need to run some updates on the toggles database:
 * Run `psql postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed`
 * Once you have connected to the database, run:
 ```sql
-update environments set enabled = true, set protected = false where name = 'default';
+update environments set enabled = true, protected = false where name = 'default';
 Insert into project_environments (project_id, environment_name) values ('default', 'default');
 ```
 * You can now create toggles in the feature flags application found at http://epb-feature-flag/features
