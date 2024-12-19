@@ -39,4 +39,11 @@ else
 
   printf "$GREEN Setting up Data Warehouse $CLEAR \n"
   docker compose exec -T epb-data-warehouse bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate || bundle exec rake db:setup'
+
+  printf "$GREEN Setting up Feature Flags $CLEAR \n"
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"UPDATE environments set enabled = true where name = 'default';\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"UPDATE environments set protected = false where name = 'default';\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into project_environments (project_id, environment_name) VALUES ('default', 'default');\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('register-api-read-only-mode');\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'register-api-read-only-mode', true, '[]');\""
 fi
