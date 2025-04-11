@@ -122,6 +122,7 @@ services:
       - epb-register-api
       - epb-frontend
       - epb-feature-flag
+      - epb-data-frontend
     ports:
       - "80:80"
     volumes:
@@ -147,6 +148,28 @@ services:
       - epb-register-api
     volumes:
       - ${EPB_FRONTEND_PATH}:/app
+
+  epb-data-frontend:
+    build:
+      context: ${EPB_DATA_FRONTEND_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      EPB_API_URL: http://epb-register-api
+      EPB_DATA_WAREHOUSE_API_URL: http://epb-data-warehouse-api
+      EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
+      EPB_AUTH_CLIENT_SECRET: test-client-secret
+      EPB_AUTH_SERVER: http://epb-auth-server/auth
+      EPB_UNLEASH_URI: http://epb-feature-flag/
+      AWS_TEST_ACCESS_ID: "test.aws.id"
+      AWS_TEST_ACCESS_SECRET: "test.aws.secret"
+      STAGE: development
+    links:
+      - epb-auth-server
+      - epb-feature-flag
+      - epb-register-api
+      - epb-data-warehouse-api
+    volumes:
+      - ${EPB_DATA_FRONTEND_PATH}:/app
 
   epb-auth-server:
     build:
@@ -284,7 +307,7 @@ EOF
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api"
+  HOSTS_LINE="127.0.0.1 epb-data-frontend getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"

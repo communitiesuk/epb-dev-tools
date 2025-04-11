@@ -1,4 +1,4 @@
-.PHONY: setup reset pull sql-auth-server sql-register-api help
+.PHONY: reset pull sql-auth-server sql-register-api help
 .DEFAULT_GOAL := help
 SHELL := /usr/bin/env bash
 
