@@ -24,7 +24,7 @@ docker run -it \
   --network=epb-dev-tools_default \
   --add-host=find-energy-certificate.epb-frontend:$PROXY_SERVER_IP \
   --volume=$DIR/../security-reports:/zap/wrk  \
-  owasp/zap2docker-stable \
+  ghcr.io/zaproxy/zaproxy:stable \
   zap-baseline.py \
   -t http://find-energy-certificate.epb-frontend/ \
   -r "$SCAN_DATE-frontend-report.html" \
@@ -38,7 +38,7 @@ docker run -it \
   --network=epb-dev-tools_default \
   --add-host=epb-register-api:$PROXY_SERVER_IP \
   --volume=$DIR/../security-reports:/zap/wrk  \
-  owasp/zap2docker-stable \
+  ghcr.io/zaproxy/zaproxy:stable \
   zap-api-scan.py \
   -t http://epb-register-api/test_files/api-spec.json \
   -f openapi \
