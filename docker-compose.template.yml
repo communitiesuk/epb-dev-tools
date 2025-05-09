@@ -38,6 +38,8 @@ services:
     build:
       context: ${EPB_DATA_FRONTEND_PATH}
       dockerfile: ${PWD}/sinatra.Dockerfile
+    env_file:
+      - .env.keys
     environment:
       EPB_API_URL: http://epb-register-api
       EPB_DATA_WAREHOUSE_API_URL: http://epb-data-warehouse-api
@@ -48,11 +50,14 @@ services:
       AWS_TEST_ACCESS_ID: "test.aws.id"
       AWS_TEST_ACCESS_SECRET: "test.aws.secret"
       STAGE: development
+      ONELOGIN_CLIENT_ID: datafrontendclientid
+      ONELOGIN_HOST_URL: http://one-login-simulator:3000
     links:
       - epb-auth-server
       - epb-feature-flag
       - epb-register-api
       - epb-data-warehouse-api
+      - one-login-simulator
     volumes:
       - ${EPB_DATA_FRONTEND_PATH}:/app
 
@@ -147,6 +152,18 @@ services:
       POSTGRES_USER: unleashed
     volumes:
       - feature-flag:/var/lib/postgresql@${POSTGRES_VERSION}/data
+
+  one-login-simulator:
+    image: ghcr.io/govuk-one-login/simulator:25.05.13
+    env_file:
+      - .env.keys
+    ports:
+      - "3000:3000"
+    environment:
+      CLIENT_ID: datafrontendclientid
+      SCOPES: openid,email
+      REDIRECT_URLS: http://epb-data-frontend/login/callback
+      SIMULATOR_URL: http://one-login-simulator:3000
 
 volumes:
   feature-flag:

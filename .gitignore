@@ -4,3 +4,5 @@ http_files/*
 !http_files/.gitkeep
 security-reports/
 .idea
+keys/
+.env.keys

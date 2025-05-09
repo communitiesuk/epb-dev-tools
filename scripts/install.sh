@@ -46,6 +46,8 @@ fi
 
 bash scripts/reset.sh
 
+generate_tls_keys
+
 setup_hostsfile
 
 setup_bash_profile

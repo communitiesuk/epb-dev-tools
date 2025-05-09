@@ -153,6 +153,8 @@ services:
     build:
       context: ${EPB_DATA_FRONTEND_PATH}
       dockerfile: ${PWD}/sinatra.Dockerfile
+    env_file:
+      - .env.keys
     environment:
       EPB_API_URL: http://epb-register-api
       EPB_DATA_WAREHOUSE_API_URL: http://epb-data-warehouse-api
@@ -163,11 +165,15 @@ services:
       AWS_TEST_ACCESS_ID: "test.aws.id"
       AWS_TEST_ACCESS_SECRET: "test.aws.secret"
       STAGE: development
+      ONELOGIN_CLIENT_ID: datafrontendclientid
+      ONELOGIN_HOST_URL: http://one-login-simulator:3000
+
     links:
       - epb-auth-server
       - epb-feature-flag
       - epb-register-api
       - epb-data-warehouse-api
+      - one-login-simulator
     volumes:
       - ${EPB_DATA_FRONTEND_PATH}:/app
 
@@ -295,7 +301,17 @@ services:
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
 
-
+  one-login-simulator:
+    image: ghcr.io/govuk-one-login/simulator:25.05.13
+    env_file:
+      - .env.keys
+    ports:
+      - "3000:3000"
+    environment:
+      CLIENT_ID: datafrontendclientid
+      SCOPES: openid,email
+      REDIRECT_URLS: http://epb-data-frontend/login/callback
+      SIMULATOR_URL: http://one-login-simulator:3000
 
 volumes:
   feature-flag:
@@ -307,7 +323,7 @@ EOF
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 epb-data-frontend getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api"
+  HOSTS_LINE="127.0.0.1 epb-data-frontend getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api one-login-simulator"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"
@@ -349,4 +365,53 @@ setup_bash_profile() {
 until_accepting_connections() {
   CONTAINER_NAME=$1
   until docker run --rm --network epb-dev-tools_default --link "$CONTAINER_NAME:pg" postgres:$POSTGRES_VERSION pg_isready -U postgres -h pg; do sleep 1; done
+}
+
+generate_tls_keys(){
+  KEYS_DIR="./keys"
+  ENV_FILE="./.env.keys"
+  mkdir -p "$KEYS_DIR"
+
+  # Generate RSA private key
+  PRIVATE_KEY_FILE="$KEYS_DIR/private_key.pem"
+  PUBLIC_KEY_FILE="$KEYS_DIR/public_key.pem"
+  JSON_KEY_FILE="$KEYS_DIR/onelogin_tls_keys.json"
+  KID="kid-$(date +%s)" # Simple unique key id
+
+  if [ ! -f "$PRIVATE_KEY_FILE" ]; then
+    echo "Generating RSA keypair..."
+    openssl genpkey -algorithm RSA -out "$PRIVATE_KEY_FILE" -pkeyopt rsa_keygen_bits:2048
+    openssl rsa -pubout -in "$PRIVATE_KEY_FILE" -out "$PUBLIC_KEY_FILE"
+  else
+    echo "RSA keypair already exists, skipping generation."
+  fi
+
+  # Read keys into variables (escaped for JSON)
+  PRIVATE_KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' "$PRIVATE_KEY_FILE")
+  PUBLIC_KEY_ESCAPED=$(awk '{printf "%s\\n", $0}' "$PUBLIC_KEY_FILE")
+
+  # Create JSON structure and escape
+  TLS_KEYS_JSON=$(cat <<EOF
+{
+  "kid": "$KID",
+  "private_key": "$PRIVATE_KEY_ESCAPED",
+  "public_key": "$PUBLIC_KEY_ESCAPED"
+}
+EOF
+  )
+  TLS_KEYS_JSON_ESCAPED=$(echo "$TLS_KEYS_JSON" | tr -d '\n' | sed -E 's/[[:space:]]+/ /g' | sed 's/  */ /g')
+
+
+  # Write .env.keys
+  echo "Writing to $ENV_FILE"
+  cat > "$ENV_FILE" <<EOF
+# Auto-generated
+PUBLIC_KEY="$PUBLIC_KEY_ESCAPED"
+ONELOGIN_TLS_KEYS='$TLS_KEYS_JSON_ESCAPED'
+EOF
+
+  echo "Keys written to $KEYS_DIR:"
+  echo "  - Private key: $PRIVATE_KEY_FILE"
+  echo "  - Public key:  $PUBLIC_KEY_FILE"
+  echo "  - JSON keys:   $JSON_KEY_FILE"
 }
