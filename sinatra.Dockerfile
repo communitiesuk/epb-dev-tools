@@ -19,6 +19,7 @@ RUN gem install bundler -v '2.3.26' && \
 COPY . /app
 
 RUN cd /app && bundle install
+RUN cd /app && make frontend-build || true
 
 RUN rm -rf /app
 
