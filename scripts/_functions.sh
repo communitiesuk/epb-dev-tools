@@ -161,7 +161,7 @@ services:
       EPB_AUTH_CLIENT_ID: 6f61579e-e829-47d7-aef5-7d36ad068bee
       EPB_AUTH_CLIENT_SECRET: test-client-secret
       EPB_AUTH_SERVER: http://epb-auth-server/auth
-      EPB_UNLEASH_URI: http://epb-feature-flag/
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
       AWS_TEST_ACCESS_ID: "test.aws.id"
       AWS_TEST_ACCESS_SECRET: "test.aws.secret"
       STAGE: development
