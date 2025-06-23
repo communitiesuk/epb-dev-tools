@@ -26,6 +26,8 @@ EPB_REGISTER_API_PATH=$EPB_REGISTER_API_PATH \
 EPB_DATA_WAREHOUSE_PATH=$EPB_DATA_WAREHOUSE_PATH \
 generate_template
 
+generate_tls_keys
+
 # Are we running in vagrant?
 if [[ "$USER" = "root" ]]; then
   echo "I think this is a vagrant environment, epb-proxy needs to run on a different port."
@@ -45,8 +47,6 @@ else
 fi
 
 bash scripts/reset.sh
-
-generate_tls_keys
 
 setup_hostsfile
 
