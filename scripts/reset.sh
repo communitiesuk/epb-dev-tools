@@ -38,7 +38,7 @@ else
   docker compose exec -T epb-frontend bash -c 'cd /app && npm install && make frontend-build'
 
   printf "$GREEN Setting up Data Warehouse $CLEAR \n"
-  docker compose exec -T epb-data-warehouse bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate || bundle exec rake db:setup'
+  docker compose exec -T epb-data-warehouse bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate:reset || bundle exec rake db:setup'
 
   printf "$GREEN Setting up Feature Flags $CLEAR \n"
   docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"UPDATE environments set enabled = true where name = 'default';\""

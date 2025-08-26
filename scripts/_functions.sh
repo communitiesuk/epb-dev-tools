@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-POSTGRES_VERSION=14.10
+POSTGRES_VERSION=17.5
 
 pull_application() {
   CLONE_URL=$1
@@ -162,11 +162,11 @@ services:
       EPB_AUTH_CLIENT_SECRET: test-client-secret
       EPB_AUTH_SERVER: http://epb-auth-server/auth
       EPB_UNLEASH_URI: http://epb-feature-flag/api
-      AWS_TEST_ACCESS_ID: "test.aws.id"
-      AWS_TEST_ACCESS_SECRET: "test.aws.secret"
       STAGE: development
       ONELOGIN_CLIENT_ID: datafrontendclientid
       ONELOGIN_HOST_URL: http://one-login-simulator:3000
+      EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
+      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
 
     links:
       - epb-auth-server
@@ -313,11 +313,22 @@ services:
       REDIRECT_URLS: http://epb-data-frontend/login/callback
       SIMULATOR_URL: http://one-login-simulator:3000
 
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+
 volumes:
   feature-flag:
   register-api:
   auth-server:
   data-warehouse:
+  dynamodb:
 
 EOF
 }
