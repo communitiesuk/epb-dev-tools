@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-POSTGRES_VERSION=14.10
+POSTGRES_VERSION=17.5
 
 pull_application() {
   CLONE_URL=$1
@@ -162,11 +162,14 @@ services:
       EPB_AUTH_CLIENT_SECRET: test-client-secret
       EPB_AUTH_SERVER: http://epb-auth-server/auth
       EPB_UNLEASH_URI: http://epb-feature-flag/api
-      AWS_TEST_ACCESS_ID: "test.aws.id"
-      AWS_TEST_ACCESS_SECRET: "test.aws.secret"
       STAGE: development
       ONELOGIN_CLIENT_ID: datafrontendclientid
       ONELOGIN_HOST_URL: http://one-login-simulator:3000
+      APP_ENV: docker
+      EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_ENDPOINT_URL_DYNAMODB: http://dynamodb-local:8000
 
     links:
       - epb-auth-server
@@ -310,14 +313,50 @@ services:
     environment:
       CLIENT_ID: datafrontendclientid
       SCOPES: openid,email
-      REDIRECT_URLS: http://epb-data-frontend/login/callback
+      REDIRECT_URLS: http://epb-data-frontend/login/callback,http://epb-data-frontend/login/callback/admin
       SIMULATOR_URL: http://one-login-simulator:3000
+
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    user: root
+    image: "amazon/dynamodb-local:latest"
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+
+  dynamodb-bootstrap:
+    image: amazon/aws-cli
+    depends_on:
+      - dynamodb-local
+    environment:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_REGION: eu-west-2
+      EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
+    entrypoint:
+    - bash
+    - -c
+    - |
+      echo "Waiting for DynamoDB Local...";
+      until curl -s http://dynamodb-local:8000 > /dev/null; do sleep 1; done;
+      echo "Creating table \$\$EPB_DATA_USER_CREDENTIAL_TABLE_NAME ...";
+
+      aws dynamodb create-table \\
+        --table-name \$\$EPB_DATA_USER_CREDENTIAL_TABLE_NAME \\
+        --attribute-definitions AttributeName=UserId,AttributeType=S \\
+        --key-schema AttributeName=UserId,KeyType=HASH \\
+        --provisioned-throughput ReadCapacityUnits=20,WriteCapacityUnits=20 \\
+        --endpoint-url http://dynamodb-local:8000;
+      echo "Done!"
 
 volumes:
   feature-flag:
   register-api:
   auth-server:
   data-warehouse:
+  dynamodb:
 
 EOF
 }

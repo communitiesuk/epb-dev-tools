@@ -1,3 +1,20 @@
+x-api-app: &api-app
+  environment:
+    DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
+    EPB_UNLEASH_URI: http://epb-feature-flag/api
+    EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
+    JWT_ISSUER: epb-auth-server
+    JWT_SECRET: test-jwt-secret
+    STAGE: development
+    VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.1.0,SAP-Schema-19.0.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-20.0.0,RdSAP-Schema-NI-20.0.0
+    VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0
+  links:
+    - epb-feature-flag
+    - epb-register-api-db
+    - epb-data-warehouse-queues
+  volumes:
+    - ${EPB_REGISTER_API_PATH}:/app
+
 services:
   epb-proxy:
     build:
@@ -7,6 +24,7 @@ services:
       - epb-auth-server
       - epb-register-api
       - epb-frontend
+      - epb-feature-flag
       - epb-data-frontend
     ports:
       - "80:80"
@@ -47,11 +65,15 @@ services:
       EPB_AUTH_CLIENT_SECRET: test-client-secret
       EPB_AUTH_SERVER: http://epb-auth-server/auth
       EPB_UNLEASH_URI: http://epb-feature-flag/api
-      AWS_TEST_ACCESS_ID: "test.aws.id"
-      AWS_TEST_ACCESS_SECRET: "test.aws.secret"
       STAGE: development
       ONELOGIN_CLIENT_ID: datafrontendclientid
       ONELOGIN_HOST_URL: http://one-login-simulator:3000
+      APP_ENV: docker
+      EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_ENDPOINT_URL_DYNAMODB: http://dynamodb-local:8000
+
     links:
       - epb-auth-server
       - epb-feature-flag
@@ -66,13 +88,16 @@ services:
       context: ${EPB_AUTH_SERVER_PATH}
       dockerfile: ${PWD}/sinatra.Dockerfile
     environment:
-      DATABASE_URL: postgresql://epb_auth:superSecret30CharacterPassword@epb-auth-server-db/epb_auth
+      DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-auth-server-db/epb
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       URL_PREFIX: /auth
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
       RACK_ENV: development
+      STAGE: development
     links:
       - epb-auth-server-db
+      - epb-feature-flag
     volumes:
       - ${EPB_AUTH_SERVER_PATH}:/app
 
@@ -82,9 +107,91 @@ services:
       dockerfile: ${PWD}/epbDatabase.Dockerfile
     environment:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
-      POSTGRES_USER: epb_auth
+      POSTGRES_USER: epb
     volumes:
-      - auth-server:/var/lib/postgresql@${POSTGRES_VERSION}/data
+      - auth-server:/var/lib/postgresql@$POSTGRES_VERSION/data
+
+  epb-register-api:
+    <<: *api-app
+    build:
+      context: ${EPB_REGISTER_API_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+
+  epb-register-api-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: superSecret30CharacterPassword
+      POSTGRES_USER: epb
+    volumes:
+      - register-api:/var/lib/postgresql@$POSTGRES_VERSION/data
+
+  epb-data-warehouse-queues:
+    image: redis
+
+  epb-feature-flag:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/unleash.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed
+      DATABASE_SSL: "false"
+      HTTP_HOST: 0.0.0.0
+      HTTP_PORT: 80
+    links:
+      - epb-feature-flag-db
+    command: >
+      sh -c "
+        while ! nc -z epb-feature-flag-db 5432; do
+          echo 'Postgres is unavailable - trying again in 1s...'
+          sleep 1
+        done
+        sleep 1
+        echo 'Starting Unleash...'
+        yarn run start"
+
+  epb-feature-flag-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: superSecret30CharacterPassword
+      POSTGRES_USER: unleashed
+    volumes:
+      - feature-flag:/var/lib/postgresql@$POSTGRES_VERSION/data
+
+  epb-data-warehouse:
+    build:
+      context: ${EPB_DATA_WAREHOUSE_PATH}
+      dockerfile: ${PWD}/dataWarehouse.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://epb:SecretWarehousePassword@epb-data-warehouse-db/epb?pool=50
+      EPB_API_URL: http://epb-register-api
+      EPB_QUEUES_URI: redis://epb-data-warehouse-queues
+      EPB_AUTH_CLIENT_ID: 5e7b7607-971b-45a4-9155-cb4f6ea7e9f5
+      EPB_AUTH_CLIENT_SECRET: data-warehouse-secret
+      EPB_AUTH_SERVER: http://epb-auth-server/auth
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+      STAGE: development
+    links:
+      - epb-feature-flag
+      - epb-data-warehouse-db
+      - epb-data-warehouse-queues
+    volumes:
+      - ${EPB_DATA_WAREHOUSE_PATH}:/app
+
+  epb-data-warehouse-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: SecretWarehousePassword
+      POSTGRES_USER: epb
+    volumes:
+      - data-warehouse:/var/lib/postgresql@$POSTGRES_VERSION/data
 
   epb-data-warehouse-api:
     build:
@@ -100,59 +207,6 @@ services:
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
 
-  epb-register-api:
-    build:
-      context: ${EPB_REGISTER_API_PATH}
-      dockerfile: ${PWD}/sinatra.Dockerfile
-    environment:
-      DATABASE_URL: postgresql://epb_register:superSecret30CharacterPassword@epb-register-api-db/epb_register
-      EPB_UNLEASH_URI: http://epb-feature-flag/
-      JWT_ISSUER: epb-auth-server
-      JWT_SECRET: test-jwt-secret
-      STAGE: development
-    links:
-      - epb-feature-flag
-      - epb-register-api-db
-    volumes:
-      - ${EPB_REGISTER_API_PATH}:/app
-
-  epb-register-api-db:
-    build:
-      context: ${PWD}/
-      dockerfile: ${PWD}/epbDatabase.Dockerfile
-    environment:
-      POSTGRES_PASSWORD: superSecret30CharacterPassword
-      POSTGRES_USER: epb_register
-    volumes:
-      - register-api:/var/lib/postgresql@${POSTGRES_VERSION}/data
-
-  epb-feature-flag:
-    environment:
-      DATABASE_URL: postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed
-      HTTP_HOST: 0.0.0.0
-      HTTP_PORT: 80
-    image: unleashorg/unleash-server:3.1
-    links:
-      - epb-feature-flag-db
-    command: >
-      sh -c "
-        while ! nc -z epb-feature-flag-db 5432; do
-          echo 'Postgres is unavailable.'
-          sleep 1
-        done
-        sleep 10
-        npm run start"
-
-  epb-feature-flag-db:
-    build:
-      context: ${PWD}/
-      dockerfile: ${PWD}/epbDatabase.Dockerfile
-    environment:
-      POSTGRES_PASSWORD: superSecret30CharacterPassword
-      POSTGRES_USER: unleashed
-    volumes:
-      - feature-flag:/var/lib/postgresql@${POSTGRES_VERSION}/data
-
   one-login-simulator:
     image: ghcr.io/govuk-one-login/simulator:25.05.13
     env_file:
@@ -162,10 +216,47 @@ services:
     environment:
       CLIENT_ID: datafrontendclientid
       SCOPES: openid,email
-      REDIRECT_URLS: http://epb-data-frontend/login/callback
+      REDIRECT_URLS: http://epb-data-frontend/login/callback,http://epb-data-frontend/login/callback/admin
       SIMULATOR_URL: http://one-login-simulator:3000
+
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    user: root
+    image: "amazon/dynamodb-local:latest"
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+
+  dynamodb-bootstrap:
+    image: amazon/aws-cli
+    depends_on:
+      - dynamodb-local
+    environment:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_REGION: eu-west-2
+      EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
+    entrypoint:
+    - bash
+    - -c
+    - |
+      echo "Waiting for DynamoDB Local...";
+      until curl -s http://dynamodb-local:8000 > /dev/null; do sleep 1; done;
+      echo "Creating table $$EPB_DATA_USER_CREDENTIAL_TABLE_NAME ...";
+
+      aws dynamodb create-table \
+        --table-name $$EPB_DATA_USER_CREDENTIAL_TABLE_NAME \
+        --attribute-definitions AttributeName=UserId,AttributeType=S \
+        --key-schema AttributeName=UserId,KeyType=HASH \
+        --provisioned-throughput ReadCapacityUnits=20,WriteCapacityUnits=20 \
+        --endpoint-url http://dynamodb-local:8000;
+      echo "Done!"
 
 volumes:
   feature-flag:
   register-api:
   auth-server:
+  data-warehouse:
+  dynamodb:
