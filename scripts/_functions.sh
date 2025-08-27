@@ -167,6 +167,8 @@ services:
       ONELOGIN_HOST_URL: http://one-login-simulator:3000
       EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
       DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
 
     links:
       - epb-auth-server
@@ -314,9 +316,9 @@ services:
       SIMULATOR_URL: http://one-login-simulator:3000
 
   dynamodb-local:
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    user: root
     image: "amazon/dynamodb-local:latest"
-    container_name: dynamodb-local
     ports:
       - "8000:8000"
     volumes:
