@@ -202,6 +202,12 @@ services:
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
+      APP_ENV: docker
+      EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_ENDPOINT_URL_DYNAMODB: http://dynamodb-local:8000
+
     links:
       - epb-data-warehouse-db
     volumes:
