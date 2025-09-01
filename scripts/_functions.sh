@@ -165,7 +165,7 @@ services:
       STAGE: development
       ONELOGIN_CLIENT_ID: datafrontendclientid
       ONELOGIN_HOST_URL: http://one-login-simulator:3000
-      APP_ENV: docker
+      APP_ENV: development
       EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
