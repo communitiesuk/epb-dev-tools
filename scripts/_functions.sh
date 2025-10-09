@@ -111,7 +111,7 @@ generate_template() {
 }
 
 setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 epb-data-frontend getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api one-login-simulator"
+  HOSTS_LINE="127.0.0.1 epb-addressing epb-data-frontend getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api one-login-simulator"
 
   if grep -q "$HOSTS_LINE" "/etc/hosts"; then
     echo "Hostsfile configuration already there"

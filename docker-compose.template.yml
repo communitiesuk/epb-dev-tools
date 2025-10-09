@@ -213,6 +213,30 @@ services:
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
 
+  epb-addressing-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: SecretAddressingPassword
+      POSTGRES_USER: epb
+    volumes:
+      - addressing:/var/lib/postgresql@${POSTGRES_VERSION}/data
+
+  epb-addressing:
+    build:
+      context: ${EPB_ADDRESSING_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://epb:SecretAddressingPassword@epb-addressing-db/epb?pool=50
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+      STAGE: development
+    links:
+      - epb-addressing-db
+    volumes:
+      - ${EPB_ADDRESSING_PATH}:/app
+
   one-login-simulator:
     image: ghcr.io/govuk-one-login/simulator:25.05.13
     env_file:
@@ -266,3 +290,4 @@ volumes:
   auth-server:
   data-warehouse:
   dynamodb:
+  addressing:
