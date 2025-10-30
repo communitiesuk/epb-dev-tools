@@ -1,4 +1,4 @@
-FROM ruby:3.3.4
+FROM ruby:3.4.7
 
 ENV LANG=en_GB.UTF-8
 
