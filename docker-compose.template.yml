@@ -244,6 +244,7 @@ services:
 
   one-login-simulator:
     image: ghcr.io/govuk-one-login/simulator:25.05.13
+    platform: linux/amd64
     env_file:
       - .env.keys
     ports:
