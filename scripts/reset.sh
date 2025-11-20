@@ -35,7 +35,10 @@ else
   docker compose exec -T epb-auth-server-db bash -c "psql --username epb -d epb -c \"INSERT INTO client_scopes (client_id, scope) VALUES ('bcef78ba-8e31-4639-8dc7-0754d1f67db8', 'addressing:read');\""
 
   printf "$GREEN Setting up Register API $CLEAR \n"
-  docker compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
+#  cd app
+#  git restore schema.rb
+#  bundle exec rake db:drop DISABLE_DATABASE_ENVIRONMENT_CHECK=1 - might not need to do this
+  docker compose exec -T epb-register-api bash -c 'cd /app && git restore schema.rb && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
 
   printf "$GREEN Setting up Frontend $CLEAR \n"
   docker compose exec -T epb-frontend bash -c 'cd /app && npm install && make frontend-build'
