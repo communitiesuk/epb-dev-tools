@@ -54,5 +54,7 @@ else
   docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'register-api-read-only-mode', true, '[]');\""
   docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('epb-frontend-data-restrict-user-access');\""
   docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'epb-frontend-data-restrict-user-access', false, '[]');\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('address-matching-during-lodgement');\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'address-matching-during-lodgement', true, '[]');\""
 
 fi
