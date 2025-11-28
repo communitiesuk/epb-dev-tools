@@ -52,10 +52,20 @@ lodge-assessments: ## run rake to save xml fixtures to docker db
 		@docker compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake dev_data:lodge_dev_assessments'
 
 load-local-data:
+
+		@docker compose stop epb-addressing-db
+		@docker compose rm -f -v epb-addressing-db
+		@docker compose stop epb-register-api-db
+		@docker compose rm -f -v epb-register-api-db
+		@docker compose stop epb-data-warehouse-db
+		@docker compose rm -f -v epb-data-warehouse-db
 		@docker compose up  -d --force-recreate --build epb-register-api-db
 		@docker compose up  -d --force-recreate --build epb-data-warehouse-db
+		@docker compose up  -d --force-recreate --build epb-addressing-db
+		@sleep 2
 		@docker compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake db:migrate'
 		@docker compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake one_off:seed_ons_data'
+		@docker compose exec -T epb-addressing bash -c 'cd /app && make setup-db && make load_test_data'
 		@docker compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make seed-local-db'
 
 load-service-stats-data:
