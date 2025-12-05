@@ -252,7 +252,7 @@ services:
     environment:
       CLIENT_ID: datafrontendclientid
       SCOPES: openid,email
-      REDIRECT_URLS: http://epb-data-frontend/login/callback,http://epb-data-frontend/login/callback/admin
+      REDIRECT_URLS: http://epb-data-frontend/login/callback,http://epb-data-frontend/login/callback/admin,http://epb-data-frontend/login/callback/opt-out
       SIMULATOR_URL: http://one-login-simulator:3000
 
   dynamodb-local:
