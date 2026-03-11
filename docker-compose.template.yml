@@ -154,8 +154,7 @@ services:
           sleep 1
         done
         sleep 1
-        echo 'Starting Unleash...'
-        yarn run start"
+        echo 'Starting Unleash...'"
 
   epb-feature-flag-db:
     build:

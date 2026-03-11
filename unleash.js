@@ -1,11 +1,8 @@
-'use strict';
+// ESM version
+import { start } from 'unleash-server';
 
-const unleash = require('unleash-server');
-
-let options = {
-    authentication: {
-        type: "none"
-    }
+const options = {
+  authentication: { type: 'none' }
 };
 
-unleash.start(options);
+await start(options);

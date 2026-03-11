@@ -47,14 +47,13 @@ else
   docker compose exec -T epb-addressing bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
 
   printf "$GREEN Setting up Feature Flags $CLEAR \n"
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"UPDATE environments set enabled = true where name = 'default';\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"UPDATE environments set protected = false where name = 'default';\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into project_environments (project_id, environment_name) VALUES ('default', 'default');\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('register-api-read-only-mode');\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'register-api-read-only-mode', true, '[]');\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('epb-frontend-data-restrict-user-access');\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'epb-frontend-data-restrict-user-access', false, '[]');\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('address-matching-during-lodgement');\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'address-matching-during-lodgement', true, '[]');\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into environments (name, type, enabled, protected) values ('default', 'default', true, false)\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into project_environments (project_id, environment_name) VALUES ('default', 'default') ON CONFLICT (project_id, environment_name) DO NOTHING;\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('register-api-read-only-mode') ON CONFLICT (name) DO NOTHING;\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'register-api-read-only-mode', true, '[]') ON CONFLICT (environment, feature_name) DO NOTHING;\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('epb-frontend-data-restrict-user-access') ON CONFLICT (name) DO NOTHING;\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'epb-frontend-data-restrict-user-access', false, '[]') ON CONFLICT (environment, feature_name) DO NOTHING;\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('address-matching-during-lodgement') ON CONFLICT (name) DO NOTHING;\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'address-matching-during-lodgement', true, '[]') ON CONFLICT (environment, feature_name) DO NOTHING;\""
 
 fi
