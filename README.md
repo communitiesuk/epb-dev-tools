@@ -86,16 +86,12 @@ Register
 
 #### Toggles / Feature flags
 
-Before you use them, you will need to run some updates on the toggles database:
-
-* Go to the toggles / feature flag db container in docker desktop
-* Run `psql postgresql://unleashed:superSecret30CharacterPassword@epb-feature-flag-db/unleashed`
-* Once you have connected to the database, run:
-```sql
-update environments set enabled = true, protected = false where name = 'default';
-Insert into project_environments (project_id, environment_name) values ('default', 'default');
-```
-* You can now create toggles in the feature flags application found at http://epb-feature-flag/features
+* You can now create toggles in the feature flags application found at http://epb-feature-flag
+* The script in the reset.sh, will set up the feature flag with a few toggles.
+* The upgrade to v7, has resulted in a few changes to how the application works
+* The default environment is no longer functional, instead there is a development 
+and production environment created when a new feature flag is created
+* To turn the feature flag, use the switch in the development environment
 
 ### Make File
 
