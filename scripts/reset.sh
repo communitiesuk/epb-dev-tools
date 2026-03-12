@@ -52,6 +52,6 @@ else
   docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('epb-frontend-data-restrict-user-access') ON CONFLICT (name) DO NOTHING;\""
   docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'epb-frontend-data-restrict-user-access', false, '[]') ON CONFLICT (environment, feature_name) DO NOTHING;\""
   docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into features (name) VALUES ('block-address-matching-during-lodgement') ON CONFLICT (name) DO NOTHING;\""
-  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'address-matching-during-lodgement', false, '[]') ON CONFLICT (environment, feature_name) DO NOTHING;\""
+  docker compose exec -T epb-feature-flag-db bash -c "psql --username unleashed -d unleashed -c \"INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('default', 'block-address-matching-during-lodgement', false, '[]') ON CONFLICT (environment, feature_name) DO NOTHING;\""
 
 fi
