@@ -56,6 +56,7 @@ else
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scheme:assessor:fetch'), ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scheme:assessor:list'), ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scheme:assessor:update'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scheme:create'), ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scheme:list'), ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'statistics:fetch'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'warm-home-discount:assessment:fetch'),
+  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scotland_assessment:lodge'),('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'migrate:scotland'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scotland_assessment:fetch'), ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scotland_assessment:search'), ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scotland_assessor:search')
   ;\""
 
