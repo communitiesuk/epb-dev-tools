@@ -56,6 +56,7 @@ services:
       - epb-register-api
     volumes:
       - ${EPB_FRONTEND_PATH}:/app
+      - /app/node_modules
 
   epb-data-frontend:
     build:
@@ -82,8 +83,6 @@ services:
       NOTIFY_DATA_API_KEY: optoutrequest-658d1738-b6c2-426b-9215-a7a9b30ad44f-ec9bd43e-bf9b-41ef-9e11-43318a7d8c72
       KMS_KEY_ID: test-kms-key-id
       AWS_KMS_ENDPOINT: http://kms-local:4000
-
-
     links:
       - epb-auth-server
       - epb-feature-flag
@@ -92,6 +91,7 @@ services:
       - one-login-simulator
     volumes:
       - ${EPB_DATA_FRONTEND_PATH}:/app
+      - /app/node_modules
 
   epb-auth-server:
     build:
@@ -194,6 +194,7 @@ services:
       - epb-data-warehouse-queues
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
+      - /app/node_modules
 
   epb-data-warehouse-db:
     build:
