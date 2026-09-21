@@ -21,16 +21,14 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN gem install bundler -v '2.3.26' && \
-    gem install rerun
-
 COPY . /app
 
-RUN cd /app && bundle install
-RUN cd /app && make frontend-build || true
+WORKDIR /app
 
-RUN rm -rf /app
+RUN bundle install
+# Only run if the frontend-build make task exists
+RUN if make -n frontend-build >/dev/null 2>&1; then make frontend-build; fi
 
 EXPOSE 80
 
-ENTRYPOINT bash -c 'cd /app && bundle exec rackup -p 80 -o 0.0.0.0'
+ENTRYPOINT bash -c 'bundle exec rackup -p 80 -o 0.0.0.0'

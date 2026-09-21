@@ -47,7 +47,7 @@ these steps:
         1. Setup the authentication service
 
             ```sh
-            docker compose exec -T epb-auth-server bash -c 'cd /app && make db-setup'
+            docker compose exec -T epb-auth-server bash -c 'make db-setup'
 
             docker compose exec -T epb-auth-server-db bash -c "psql --username epb -d epb -c \"INSERT INTO clients (id, name, supplemental) VALUES ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'epb_frontend', '{\\\"scheme_ids\\\": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]}');\""
 
@@ -66,28 +66,28 @@ these steps:
         2. Setup register API service
 
             ```sh
-            docker compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
+            docker compose exec -T epb-register-api bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
             ```
 
             Note: The next process can take up to 20 minutes, even on modern
             hardware.
 
             ```sh
-            docker compose exec epb-register-api bash -c 'cd /app && bundle exec rake maintenance:import_postcode'
+            docker compose exec epb-register-api bash -c 'bundle exec rake maintenance:import_postcode'
             
-            docker compose exec epb-register-api bash -c 'cd /app && bundle exec rake dev_data:import_postcode_outcode'
+            docker compose exec epb-register-api bash -c 'bundle exec rake dev_data:import_postcode_outcode'
 
-            docker compose exec epb-register-api bash -c 'cd /app && bundle exec rake dev_data:generate_schemes'
+            docker compose exec epb-register-api bash -c 'bundle exec rake dev_data:generate_schemes'
 
-            docker compose exec epb-register-api bash -c 'cd /app && bundle exec rake dev_data:generate_assessors'
+            docker compose exec epb-register-api bash -c 'bundle exec rake dev_data:generate_assessors'
             ```
         3. Setup Frontend
 
-            `docker compose exec -T epb-frontend bash -c 'cd /app && npm install && make frontend-build'`
+            `docker compose exec -T epb-frontend bash -c 'npm install && make frontend-build'`
 
         4. Setup Data Warehouse
             ```sh
-              docker compose exec -T epb-data-warehouse bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate || bundle exec rake db:setup'
+              docker compose exec -T epb-data-warehouse bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate || bundle exec rake db:setup'
             ```
 8. Add the following line to your hosts file (`/etc/hosts` for macOS and most
     linux distros) `127.0.0.1 getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag`

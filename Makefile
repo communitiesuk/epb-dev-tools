@@ -30,11 +30,11 @@ redis: ## open a redis-cli session on the given container
 
 migrate: ## run migrations (epb migrate epb-auth-server)
 	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
-	@docker compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:migrate'
+	@docker compose exec "${APP}" bash -c 'bundle exec rake db:migrate'
 
 rollback: ## rollback migrations (epb rollback epb-auth-server)
 	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
-	@docker compose exec "${APP}" bash -c 'cd /app && bundle exec rake db:rollback'
+	@docker compose exec "${APP}" bash -c 'bundle exec rake db:rollback'
 
 logs: ## tail container(s) logs (epb logs epb-auth-server)
 	@docker compose logs -f ${APP}
@@ -49,7 +49,7 @@ security-scan:
 	@$(SHELL) scripts/security_scan.sh
 
 lodge-assessments: ## run rake to save xml fixtures to docker db
-		@docker compose exec -T epb-register-api bash -c 'cd /app && bundle exec rake dev_data:lodge_dev_assessments'
+		@docker compose exec -T epb-register-api bash -c 'bundle exec rake dev_data:lodge_dev_assessments'
 
 load-local-data:
 
@@ -63,16 +63,16 @@ load-local-data:
 		@docker compose up  -d --force-recreate --build epb-data-warehouse-db
 		@docker compose up  -d --force-recreate --build epb-addressing-db
 		@sleep 2
-		@docker compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake db:migrate'
-		@docker compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake one_off:seed_ons_data'
-		@docker compose exec -T epb-addressing bash -c 'cd /app && make setup-db && make load_test_data'
-		@docker compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make seed-local-db'
+		@docker compose exec -T epb-data-warehouse bash -c 'bundle exec rake db:migrate'
+		@docker compose exec -T epb-data-warehouse bash -c 'bundle exec rake one_off:seed_ons_data'
+		@docker compose exec -T epb-addressing bash -c 'make setup-db && make load_test_data'
+		@docker compose exec -T epb-register-api bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make seed-local-db'
 
 load-service-stats-data:
 	@docker compose up  -d --force-recreate --build epb-register-api-db
-	@docker compose exec -T epb-register-api bash -c 'cd /app && RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db && rake dev_data:generate_fake_stats'
+	@docker compose exec -T epb-register-api bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db && rake dev_data:generate_fake_stats'
 	@docker compose up  -d --force-recreate --build epb-data-warehouse-db
-	@docker compose exec -T epb-data-warehouse bash -c 'cd /app && bundle exec rake db:migrate && make seed-stats-data'
+	@docker compose exec -T epb-data-warehouse bash -c 'bundle exec rake db:migrate && make seed-stats-data'
 
 setup-hostsfile: ## Fallback for users without sudo access running initial setup
 	@$(SHELL) scripts/setup_hostsfile.sh
