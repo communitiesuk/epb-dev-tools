@@ -251,7 +251,7 @@ services:
       - ${EPB_ADDRESSING_PATH}:/app
 
   one-login-simulator:
-    image: ghcr.io/govuk-one-login/simulator:26.04.1
+    image: ghcr.io/govuk-one-login/simulator:26.09.4
     platform: linux/amd64
     env_file:
       - .env.keys
@@ -260,7 +260,8 @@ services:
     environment:
       CLIENT_ID: datafrontendclientid
       SCOPES: openid,email
-      REDIRECT_URLS: http://epb-data-frontend/login/callback,http://epb-data-frontend/login/callback/admin,http://epb-data-frontend/login/callback/opt-out
+      REDIRECT_URLS: http://epb-data-frontend/login/callback
+      POST_LOGOUT_REDIRECT_URLS: http://epb-data-frontend/signed-out
       SIMULATOR_URL: http://one-login-simulator:3000
 
   kms-local:
