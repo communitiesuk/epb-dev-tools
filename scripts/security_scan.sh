@@ -44,8 +44,8 @@ docker run -it \
 echo -e "-> Running Zap api scan against the api using the api spec";
 
 # The auth header here is Base64 encoding of the security scan client ID and client secret defined in reset.sh
-# a084abff-c22d-4b78-875c-1e7b163c5ee3:security-scan-secret
-AUTH_TOKEN=$(curl -s -X POST http://epb-register-api/auth/oauth/token -H 'Content-Length: 0' -H 'Authorization: Basic YTA4NGFiZmYtYzIyZC00Yjc4LTg3NWMtMWU3YjE2M2M1ZWUzOnNlY3VyaXR5LXNjYW4tc2VjcmV0' | jq -r '.access_token')
+# a084abff-c22d-4b78-875c-1e7b163c5ee3:all-scopes-secret
+AUTH_TOKEN=$(curl -s -X POST http://epb-register-api/auth/oauth/token -H 'Content-Length: 0' -H 'Authorization: Basic YTA4NGFiZmYtYzIyZC00Yjc4LTg3NWMtMWU3YjE2M2M1ZWUzOmFsbC1zY29wZXMtc2VjcmV0' | jq -r '.access_token')
 
 docker run -it \
   --network=epb-dev-tools_default \
