@@ -1,4 +1,4 @@
-FROM unleashorg/unleash-server:7.5.1
+FROM unleashorg/unleash-server:8.2.0
 
 COPY ./unleash.js index.js
 
