@@ -76,6 +76,7 @@ services:
       ONELOGIN_HOST_URL: http://one-login-simulator:3000
       APP_ENV: development
       EPB_DATA_USER_CREDENTIAL_TABLE_NAME: user_credentials
+      EPB_DATA_USER_CREDENTIAL_V2_TABLE_NAME: user_credentials_v2
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
       AWS_S3_USER_DATA_BUCKET_NAME: dummy-bucket
