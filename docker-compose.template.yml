@@ -265,6 +265,7 @@ services:
       REDIRECT_URLS: http://epb-data-frontend/login/callback
       POST_LOGOUT_REDIRECT_URLS: http://epb-data-frontend/signed-out
       SIMULATOR_URL: http://one-login-simulator:3000
+      INTERACTIVE_MODE: true
 
   kms-local:
     build:
