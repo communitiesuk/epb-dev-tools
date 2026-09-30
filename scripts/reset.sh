@@ -32,7 +32,7 @@ else
   docker compose exec -T epb-frontend bash -c 'npm install && make frontend-build'
 
   printf "$GREEN Setting up Data Warehouse $CLEAR \n"
-  docker compose exec -T epb-data-warehouse bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate || bundle exec rake db:setup'
+  docker compose exec -T epb-data-warehouse bash -c 'RACK_ENV=production RAILS_ENV=development bundle exec rake db:create db:migrate'
 
   printf "$GREEN Setting up Data Frontend $CLEAR \n"
   docker compose exec -T epb-data-frontend bash -c 'npm install && make frontend-build'
@@ -42,4 +42,13 @@ else
 
   printf "$GREEN Setting up Feature Flags $CLEAR \n"
   docker compose exec -T epb-feature-flag-db psql -U unleashed -d unleashed < ./scripts/seed_unleashed.sql
+
+  printf "$GREEN Setting up dynamodb $CLEAR \n"
+  docker run \
+    --rm \
+    --network epb-dev-tools_default \
+    --entrypoint bash \
+    -v "$PWD/scripts:/scripts" \
+    amazon/aws-cli \
+    /scripts/setup_dynamodb.sh
 fi

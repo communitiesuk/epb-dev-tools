@@ -28,6 +28,13 @@ redis: ## open a redis-cli session on the given container
 	@if [[ -z "${APP}" ]]; then echo "Must give a container containing a Redis server" && $(MAKE) help && exit 1; fi
 	@$(SHELL) scripts/redis.sh
 
+dynamodb: ## open a bash session on the dynamodb container
+	@echo "You are in a contrainer where the AWS cli is available to run commands."
+	@echo "For example:"
+	@echo "  aws dynamodb scan --table-name user_credentials_v2"
+	@echo 
+	@$(SHELL) scripts/dynamodb.sh
+
 migrate: ## run migrations (epb migrate epb-auth-server)
 	@if [[ -z "${APP}" ]]; then echo "Must give an application" && $(MAKE) help && exit 1; fi
 	@docker compose exec "${APP}" bash -c 'bundle exec rake db:migrate'
