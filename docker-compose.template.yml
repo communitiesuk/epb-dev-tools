@@ -262,7 +262,7 @@ services:
       CLIENT_ID: datafrontendclientid
       SCOPES: openid,email
       REDIRECT_URLS: http://epb-data-frontend/login/callback
-      POST_LOGOUT_REDIRECT_URLS: http://epb-data-frontend/signed-out
+      POST_LOGOUT_REDIRECT_URLS: http://epb-data-frontend/signed-out,http://epb-data-frontend/account-deleted
       SIMULATOR_URL: http://one-login-simulator:3000
       INTERACTIVE_MODE: true
 
