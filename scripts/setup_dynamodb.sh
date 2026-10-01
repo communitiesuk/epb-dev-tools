@@ -47,26 +47,26 @@ aws dynamodb create-table \
 aws dynamodb put-item \
   --table-name user_credentials \
   --item '
-{
-  "OneLoginSub": {
-    "S": "urn:fdc:gov.uk:2022:56P4CMsGh_02YOlWpd8PAOI-2sVlB2nsNU7mcLZYhYw="
-  },
-  "OptOut": {
-    "BOOL": true
-  },
-  "BearerToken": {
-    "S": "hqhNzxZCu6wwBMY9Kte98I"
-  },
-  "UserId": {
-    "S": "fc7fad8e-9920-4616-aac2-c26ec3ae5568"
-  },
-  "EmailAddress": {
-    "S": "a21zLTQ0Mzc="
-  },
-  "CreatedAt": {
-    "S": "2026-09-30 08:45:02 +0000"
-  }
-}'
+    {
+      "OneLoginSub": {
+        "S": "urn:fdc:gov.uk:2022:56P4CMsGh_02YOlWpd8PAOI-2sVlB2nsNU7mcLZYhYw="
+      },
+      "OptOut": {
+        "BOOL": true
+      },
+      "BearerToken": {
+        "S": "hqhNzxZCu6wwBMY9Kte98I"
+      },
+      "UserId": {
+        "S": "fc7fad8e-9920-4616-aac2-c26ec3ae5568"
+      },
+      "EmailAddress": {
+        "S": "a21zLTQ0Mzc="
+      },
+      "CreatedAt": {
+        "S": "2026-09-30 08:45:02 +0000"
+      }
+    }'
 
 if aws dynamodb describe-table --table-name user_credentials_v2 --output off 2>/dev/null; then
   aws dynamodb delete-table \
@@ -81,57 +81,76 @@ aws dynamodb create-table \
   --attribute-definitions \
     AttributeName=UserId,AttributeType=S \
     AttributeName=Type,AttributeType=S \
+    AttributeName=GSI1_PK,AttributeType=S \
   --key-schema \
     AttributeName=UserId,KeyType=HASH \
     AttributeName=Type,KeyType=RANGE \
+  --global-secondary-indexes '[
+    {
+      "IndexName": "GSI1_PK_Index",
+      "KeySchema": [
+        {
+          "AttributeName": "GSI1_PK",
+          "KeyType": "HASH"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "KEYS_ONLY"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    }
+  ]' \
   --provisioned-throughput ReadCapacityUnits=20,WriteCapacityUnits=20
 
 aws dynamodb put-item \
   --table-name user_credentials_v2 \
   --item '
-{
-  "Attributes": {
-    "M": {
-      "OptOut": {
-        "BOOL": false
+    {
+      "Attributes": {
+        "M": {
+          "OptOut": {
+            "BOOL": false
+          },
+          "EmailAddress": {
+            "S": "a21zLTQ0Mzc="
+          },
+          "CreatedAt": {
+            "S": "2026-09-30 08:45:02 +0000"
+          }
+        }
       },
-      "EmailAddress": {
-        "S": "a21zLTQ0Mzc="
+      "Type": {
+        "S": "PROFILE"
       },
-      "CreatedAt": {
-        "S": "2026-09-30 08:45:02 +0000"
+      "UserId": {
+        "S": "fc7fad8e-9920-4616-aac2-c26ec3ae5568"
+      },
+      "GSI1_PK": {
+        "S": "ONELOGIN#urn:fdc:gov.uk:2022:56P4CMsGh_02YOlWpd8PAOI-2sVlB2nsNU7mcLZYhYw="
       }
-    }
-  },
-  "OneLoginSub": {
-    "S": "urn:fdc:gov.uk:2022:56P4CMsGh_02YOlWpd8PAOI-2sVlB2nsNU7mcLZYhYw="
-  },
-  "Type": {
-    "S": "PROFILE"
-  },
-  "UserId": {
-    "S": "fc7fad8e-9920-4616-aac2-c26ec3ae5568"
-  }
-}'
+    }'
 
 aws dynamodb put-item \
   --table-name user_credentials_v2 \
   --item '
-{
-  "Attributes": {
-    "M": {
-      "CreatedAt": {
-        "S": "2026-09-30 08:45:02 +0000"
+    {
+      "Attributes": {
+        "M": {
+          "CreatedAt": {
+            "S": "2026-09-30 08:45:02 +0000"
+          }
+        }
+      },
+      "Type": {
+        "S": "TOKEN#hqhNzxZCu6wwBMY9Kte98I"
+      },
+      "GSI1_PK": {
+        "S": "TOKEN#hqhNzxZCu6wwBMY9Kte98I"
+      },
+      "UserId": {
+        "S": "fc7fad8e-9920-4616-aac2-c26ec3ae5568"
       }
-    }
-  },
-  "Type": {
-    "S": "TOKEN#hqhNzxZCu6wwBMY9Kte98I"
-  },
-  "BearerToken": {
-    "S": "hqhNzxZCu6wwBMY9Kte98I"
-  },
-  "UserId": {
-    "S": "fc7fad8e-9920-4616-aac2-c26ec3ae5568"
-  }
-}'
+    }'
