@@ -54,7 +54,11 @@ INSERT INTO client_scopes (client_id, scope) VALUES
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'scotland_dec_summary:fetch'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'statistics:fetch'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'warehouse:read'),
-  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'warm-home-discount:assessment:fetch');
+  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'warm-home-discount:assessment:fetch'),
+  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'client:fetch'),
+  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'client:create'),
+  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'client:delete'),
+  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'client:update');
 
 -- Frontend
 INSERT INTO client_scopes (client_id, scope) VALUES 
