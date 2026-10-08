@@ -21,11 +21,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY . /app
-
 WORKDIR /app
 
+COPY Gemfile Gemfile.lock .
 RUN bundle install
+
+COPY . .
+
 # Only run if the frontend-build make task exists
 RUN if make -n frontend-build >/dev/null 2>&1; then make frontend-build; fi
 
