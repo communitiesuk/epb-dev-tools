@@ -70,10 +70,10 @@ load-local-data:
 		@docker compose up  -d --force-recreate --build epb-data-warehouse-db
 		@docker compose up  -d --force-recreate --build epb-addressing-db
 		@sleep 2
-		@docker compose exec -T epb-data-warehouse bash -c 'bundle exec rake db:migrate'
-		@docker compose exec -T epb-data-warehouse bash -c 'bundle exec rake one_off:seed_ons_data'
+		@docker compose exec -T epb-data-warehouse bash -c 'bundle exec rake db:migrate one_off:seed_ons_data seed_countries seed_average_co2_emissions'
 		@docker compose exec -T epb-addressing bash -c 'make setup-db && make load_test_data'
 		@docker compose exec -T epb-register-api bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make seed-local-db'
+		@docker compose exec -T epb-register-api bash -c 'bundle exec rake dev_data:generate_fake_stats'
 
 load-service-stats-data:
 	@docker compose up  -d --force-recreate --build epb-register-api-db

@@ -9,5 +9,6 @@ INSERT into features (name) VALUES
 INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES 
   ('development', 'register-api-read-only-mode', false, '[]'),
   ('development', 'epb-frontend-data-restrict-user-access', false, '[]'),
-  ('development', 'block-address-matching-during-lodgement', false, '[]')
+  ('development', 'block-address-matching-during-lodgement', false, '[]'),
+  ('development', 'frontend-show-average-co2-emission', true, '[]')
   ON CONFLICT (environment, feature_name) DO NOTHING;

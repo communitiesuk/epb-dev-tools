@@ -27,12 +27,13 @@ else
 
   printf "$GREEN Setting up Register API $CLEAR \n"
   docker compose exec -T epb-register-api bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db'
+  docker compose exec -T epb-register-api bash -c 'bundle exec rake dev_data:generate_fake_stats'
 
   printf "$GREEN Setting up Frontend $CLEAR \n"
   docker compose exec -T epb-frontend bash -c 'npm install && make frontend-build'
 
   printf "$GREEN Setting up Data Warehouse $CLEAR \n"
-  docker compose exec -T epb-data-warehouse bash -c 'RACK_ENV=production RAILS_ENV=development bundle exec rake db:create db:migrate'
+  docker compose exec -T epb-data-warehouse bash -c 'RACK_ENV=production RAILS_ENV=development bundle exec rake db:create db:migrate seed_countries seed_average_co2_emissions'
 
   printf "$GREEN Setting up Data Frontend $CLEAR \n"
   docker compose exec -T epb-data-frontend bash -c 'npm install && make frontend-build'
