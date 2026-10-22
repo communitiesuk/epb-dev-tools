@@ -3,7 +3,8 @@ DELETE FROM environments WHERE name = 'production';
 INSERT into features (name) VALUES 
   ('register-api-read-only-mode'),
   ('epb-frontend-data-restrict-user-access'),
-  ('block-address-matching-during-lodgement')
+  ('block-address-matching-during-lodgement'),
+  ('frontend-show-average-co2-emission')
   ON CONFLICT (name) DO NOTHING;
 
 INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES 
