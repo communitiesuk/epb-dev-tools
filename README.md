@@ -80,23 +80,17 @@ $ make install # will ensure that the docker compose file is up to date
 There are three services that make up the Energy Performance of Buildings
 Register
 
-* The register api - found at http://epb-register-api
-* The register's authentication service - found at http://epb-register-api/auth
-* The register's frontend service - found at http://find-energy-certificate.epb-frontend and http://getting-new-energy-certificate.epb-frontend
+* The register api - found at http://epb-register-api.localhost
+* The register's authentication service - found at http://epb-register-api.localhost/auth
+* The register's frontend service - found at http://find-energy-certificate.epb-frontend.localhost and http://getting-new-energy-certificate.epb-frontend.localhost
 
 #### Toggles / Feature flags
 
 * You can now create toggles in the feature flags application found at http://epb-feature-flag
-* The script in the reset.sh, will set up the feature flag with a few toggles.
+* The script in the seed_unleashed.sh, will set up the feature flag with a few toggles.
 * The upgrade to v7, has resulted in a few changes to how the application works
 * The default environment is no longer functional, instead there is a development 
 and production environment created when a new feature flag is created
-* To create a feature flag locally (DO NOT DO THIS in our other environments), go into the epb-feature-flag db and run the following commands:
-
-`INSERT into features (name) VALUES ('<name-of-toggle>') ON CONFLICT (name) DO NOTHING;`
-
-`INSERT into feature_environments (environment, feature_name, enabled, variants) VALUES ('development', '<name-of-toggle>', false, '[]') ON CONFLICT (environment, feature_name) DO NOTHING;`
-
 * To turn the feature flag, in the feature flag app use the switch in the development environment
 
 ### Make File

@@ -22,9 +22,7 @@ x-api-app: &api-app
 
 services:
   epb-proxy:
-    build:
-      context: ${PWD}/
-      dockerfile: ${PWD}/nginxReverseProxy.Dockerfile
+    image: nginx
     links:
       - epb-auth-server
       - epb-register-api
@@ -35,6 +33,7 @@ services:
       - "80:80"
     volumes:
       - ${PWD}/http_files:/var/www/http_files
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
   epb-frontend:
     build:
@@ -150,8 +149,6 @@ services:
       HTTP_PORT: 80
     links:
       - epb-feature-flag-db
-    ports:
-      - "4242:80"
     depends_on:
       epb-feature-flag-db:
         condition: service_healthy
@@ -259,8 +256,8 @@ services:
     environment:
       CLIENT_ID: datafrontendclientid
       SCOPES: openid,email
-      REDIRECT_URLS: http://epb-data-frontend/login/callback
-      POST_LOGOUT_REDIRECT_URLS: http://epb-data-frontend/signed-out,http://epb-data-frontend/account-deleted
+      REDIRECT_URLS: http://epb-data-frontend.localhost/login/callback
+      POST_LOGOUT_REDIRECT_URLS: http://epb-data-frontend.localhost/signed-out,http://epb-data-frontend.localhost/account-deleted
       SIMULATOR_URL: http://one-login-simulator:3000
       INTERACTIVE_MODE: true
 
