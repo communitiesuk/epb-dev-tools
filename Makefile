@@ -80,6 +80,3 @@ load-service-stats-data:
 	@docker compose exec -T epb-register-api bash -c 'RACK_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 make setup-db && rake dev_data:generate_fake_stats'
 	@docker compose up  -d --force-recreate --build epb-data-warehouse-db
 	@docker compose exec -T epb-data-warehouse bash -c 'bundle exec rake db:migrate && make seed-stats-data'
-
-setup-hostsfile: ## Fallback for users without sudo access running initial setup
-	@$(SHELL) scripts/setup_hostsfile.sh

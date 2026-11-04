@@ -52,6 +52,4 @@ fi
 
 bash scripts/reset.sh
 
-setup_hostsfile
-
 setup_bash_profile

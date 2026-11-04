@@ -110,23 +110,6 @@ generate_template() {
   envsubst "$SUBSTITUTE_VARS" < docker-compose.template.yml > docker-compose.yml
 }
 
-setup_hostsfile() {
-  HOSTS_LINE="127.0.0.1 epb-addressing epb-data-frontend getting-new-energy-certificate.epb-frontend find-energy-certificate.epb-frontend getting-new-energy-certificate.local.gov.uk find-energy-certificate.local.gov.uk epb-frontend epb-register-api epb-auth-server epb-feature-flag epb-data-warehouse-api one-login-simulator"
-
-  if grep -q "$HOSTS_LINE" "/etc/hosts"; then
-    echo "Hostsfile configuration already there"
-  else
-    if sudo -n -v 2>/dev/null; then
-      echo "Injecting hostsfile configuration"
-      echo "$HOSTS_LINE" | sudo tee -a /etc/hosts
-    else
-      echo 
-      echo -e "\033[33mUnable to update the hosts file. Please use su to switch to a user with sudo permissions and run \033[1mmake setup-hostsfile\033[0m"
-      echo 
-    fi
-  fi
-}
-
 setup_bash_profile() {
   ALIAS_INFO="alias epb=\"$DIR/../epb\""
 
