@@ -21,12 +21,6 @@ x-api-app: &api-app
 services:
   epb-proxy:
     image: nginx
-    links:
-      - epb-auth-server
-      - epb-register-api
-      - epb-frontend
-      - epb-feature-flag
-      - epb-data-frontend
     ports:
       - "80:80"
     volumes:
