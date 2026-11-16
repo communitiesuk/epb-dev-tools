@@ -13,14 +13,23 @@ x-api-app: &api-app
     VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.2.0,SAP-Schema-19.1.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-NI-21.0.0,RdSAP-Schema-21.0.0,RdSAP-Schema-21.0.1,RdSAP-Schema-NI-21.0.1,SAP-Schema-S-19.0.0,SAP-Schema-S-20.0.0,RdSAP-Schema-S-19.0,RdSAP-Schema-S-21.0,RdSAP-Schema-S-22.0.0
     VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0,DECAR-S-7.0,CS63-S-7.0,CEPC-S-7.1,DECAR-S-8.0.0,CS63-S-8.0.0,CEPC-S-8.0.0
   depends_on:
+    epb-auth-server:
     epb-register-api-db:
       condition: service_healthy
+    epb-data-warehouse-queues:
+    epb-feature-flag:
   volumes:
     - ${EPB_REGISTER_API_PATH}:/app
 
 services:
   epb-proxy:
     image: nginx
+    depends_on:
+      - epb-auth-server
+      - epb-register-api
+      - epb-frontend
+      - epb-feature-flag
+      - epb-data-frontend
     ports:
       - "80:80"
     volumes:
@@ -42,8 +51,11 @@ services:
       JWT_SECRET: test-jwt-secret
       STAGE: development
     depends_on:
+      epb-register-api:
+      epb-data-warehouse-api:
       epb-feature-flag-db:
         condition: service_healthy
+      epb-feature-flag:
     volumes:
       - ${EPB_FRONTEND_PATH}:/app
       - /app/node_modules
@@ -74,8 +86,15 @@ services:
       AWS_S3_USER_DATA_BUCKET_NAME: dummy-bucket
       NOTIFY_DATA_API_KEY: optoutrequest-658d1738-b6c2-426b-9215-a7a9b30ad44f-ec9bd43e-bf9b-41ef-9e11-43318a7d8c72
     depends_on:
+      epb-auth-server:
+      epb-register-api:
+      epb-data-warehouse-api:
       epb-feature-flag-db:
         condition: service_healthy
+      dynamodb-local:
+      one-login-simulator:
+      kms-local:
+      epb-feature-flag:
     volumes:
       - ${EPB_DATA_FRONTEND_PATH}:/app
       - /app/node_modules
@@ -187,6 +206,10 @@ services:
     depends_on:
       epb-data-warehouse-db:
         condition: service_healthy
+      epb-data-warehouse-queues:
+      dynamodb-local:
+      epb-feature-flag:
+      kms-local:
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
@@ -205,8 +228,12 @@ services:
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
     depends_on:
+      epb-auth-server:
       epb-data-warehouse-db:
         condition: service_healthy
+      dynamodb-local:
+      epb-feature-flag:
+      kms-local:
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
@@ -253,8 +280,10 @@ services:
       JWT_SECRET: test-jwt-secret
       STAGE: development
     depends_on:
+      epb-auth-server:
       epb-addressing-db:
         condition: service_healthy
+      epb-feature-flag:
     volumes:
       - ${EPB_ADDRESSING_PATH}:/app
 
