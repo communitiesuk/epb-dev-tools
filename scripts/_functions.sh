@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-POSTGRES_VERSION=18.4
 
 pull_application() {
   CLONE_URL=$1
@@ -102,11 +101,9 @@ generate_template() {
     ${EPB_DATA_WAREHOUSE_PATH},\
     ${EPB_FRONTEND_PATH},\
     ${EPB_REGISTER_API_PATH},\
-    ${POSTGRES_VERSION},\
     ${PWD}\
   '
 
-  POSTGRES_VERSION=$POSTGRES_VERSION \
   envsubst "$SUBSTITUTE_VARS" < docker-compose.template.yml > docker-compose.yml
 }
 
@@ -137,11 +134,6 @@ setup_bash_profile() {
     fi
   fi
 
-}
-
-until_accepting_connections() {
-  CONTAINER_NAME=$1
-  until docker run --rm --network epb-dev-tools_default --link "$CONTAINER_NAME:pg" postgres:$POSTGRES_VERSION pg_isready -U postgres -h pg; do sleep 1; done
 }
 
 generate_tls_keys(){

@@ -14,7 +14,7 @@ rebuild: ## force rebuild all docker images
 start: ## start all docker images
 	@$(SHELL) scripts/start.sh
 
-stop: ## pause all docker images
+stop: ## stop all docker images
 	@$(SHELL) scripts/stop.sh
 
 pull: ## git pull in all repositories

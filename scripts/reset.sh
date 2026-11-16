@@ -11,16 +11,6 @@ CLEAR='\033[0m' #
 if [[ -z $(confirm "Do you want to reset and configure the dev environment?") ]]; then
   echo "Bailing from reset"
 else
-  echo "Waiting for postgres to be up and running"
-  until_accepting_connections "epb-dev-tools-epb-auth-server-db-1"
-  echo "Auth DB OK"
-  until_accepting_connections "epb-dev-tools-epb-feature-flag-db-1"
-  echo "Toggles DB OK"
-  until_accepting_connections "epb-dev-tools-epb-register-api-db-1"
-  echo "API DB OK"
-  until_accepting_connections "epb-dev-tools-epb-data-warehouse-db-1"
-  echo "Data warehouse DB OK"
-
   printf "$GREEN Setting up Auth Server $CLEAR \n"
   docker compose exec -T epb-auth-server bash -c 'make db-setup'
   docker compose exec -T epb-auth-server-db psql -U epb -d epb < ./scripts/seed_auth_server.sql

@@ -12,11 +12,9 @@ x-api-app: &api-app
     STAGE: development
     VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.2.0,SAP-Schema-19.1.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-NI-21.0.0,RdSAP-Schema-21.0.0,RdSAP-Schema-21.0.1,RdSAP-Schema-NI-21.0.1,SAP-Schema-S-19.0.0,SAP-Schema-S-20.0.0,RdSAP-Schema-S-19.0,RdSAP-Schema-S-21.0,RdSAP-Schema-S-22.0.0
     VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0,DECAR-S-7.0,CS63-S-7.0,CEPC-S-7.1,DECAR-S-8.0.0,CS63-S-8.0.0,CEPC-S-8.0.0
-  links:
-    - epb-feature-flag
-    - epb-register-api-db
-    - epb-data-warehouse-queues
-    - epb-addressing
+  depends_on:
+    epb-register-api-db:
+      condition: service_healthy
   volumes:
     - ${EPB_REGISTER_API_PATH}:/app
 
@@ -49,10 +47,9 @@ services:
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
-    links:
-      - epb-auth-server
-      - epb-feature-flag
-      - epb-register-api
+    depends_on:
+      epb-feature-flag-db:
+        condition: service_healthy
     volumes:
       - ${EPB_FRONTEND_PATH}:/app
       - /app/node_modules
@@ -82,12 +79,9 @@ services:
       AWS_KMS_ENDPOINT: http://kms-local:4000
       AWS_S3_USER_DATA_BUCKET_NAME: dummy-bucket
       NOTIFY_DATA_API_KEY: optoutrequest-658d1738-b6c2-426b-9215-a7a9b30ad44f-ec9bd43e-bf9b-41ef-9e11-43318a7d8c72
-    links:
-      - epb-auth-server
-      - epb-feature-flag
-      - epb-register-api
-      - epb-data-warehouse-api
-      - one-login-simulator
+    depends_on:
+      epb-feature-flag-db:
+        condition: service_healthy
     volumes:
       - ${EPB_DATA_FRONTEND_PATH}:/app
       - /app/node_modules
@@ -104,9 +98,9 @@ services:
       EPB_UNLEASH_URI: http://epb-feature-flag/api
       RACK_ENV: development
       STAGE: development
-    links:
-      - epb-auth-server-db
-      - epb-feature-flag
+    depends_on:
+      epb-auth-server-db:
+        condition: service_healthy
     volumes:
       - ${EPB_AUTH_SERVER_PATH}:/app
 
@@ -118,7 +112,13 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb
     volumes:
-      - auth-server:/var/lib/postgresql@$POSTGRES_VERSION/data
+      - auth-server:/var/lib/postgresql/18/docker
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "epb"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+      start_period: 2s
 
   epb-register-api:
     <<: *api-app
@@ -134,7 +134,13 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: epb
     volumes:
-      - register-api:/var/lib/postgresql@$POSTGRES_VERSION/data
+      - register-api:/var/lib/postgresql/18/docker
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "epb"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+      start_period: 2s
 
   epb-data-warehouse-queues:
     image: redis
@@ -148,8 +154,6 @@ services:
       DATABASE_SSL: "false"
       HTTP_HOST: 0.0.0.0
       HTTP_PORT: 80
-    links:
-      - epb-feature-flag-db
     depends_on:
       epb-feature-flag-db:
         condition: service_healthy
@@ -162,13 +166,13 @@ services:
       POSTGRES_PASSWORD: superSecret30CharacterPassword
       POSTGRES_USER: unleashed
     volumes:
-      - feature-flag:/var/lib/postgresql@$POSTGRES_VERSION/data
+      - feature-flag:/var/lib/postgresql/18/docker
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U unleashed || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 12
-      start_period: 10s
+      test: ["CMD", "pg_isready", "-U", "unleashed"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+      start_period: 2s
 
   epb-data-warehouse:
     build:
@@ -186,10 +190,9 @@ services:
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
-    links:
-      - epb-feature-flag
-      - epb-data-warehouse-db
-      - epb-data-warehouse-queues
+    depends_on:
+      epb-data-warehouse-db:
+        condition: service_healthy
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
@@ -207,8 +210,9 @@ services:
       AWS_ENDPOINT_URL_DYNAMODB: http://dynamodb-local:8000
       AWS_ACCESS_KEY_ID: dummy
       AWS_SECRET_ACCESS_KEY: dummy
-    links:
-      - epb-data-warehouse-db
+    depends_on:
+      epb-data-warehouse-db:
+        condition: service_healthy
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
@@ -220,8 +224,14 @@ services:
     environment:
       POSTGRES_PASSWORD: SecretAddressingPassword
       POSTGRES_USER: epb
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "epb"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+      start_period: 2s
     volumes:
-      - addressing:/var/lib/postgresql@${POSTGRES_VERSION}/data
+      - addressing:/var/lib/postgresql/18/docker
 
   epb-data-warehouse-db:
     build:
@@ -230,8 +240,14 @@ services:
     environment:
       POSTGRES_PASSWORD: SecretWarehousePassword
       POSTGRES_USER: epb
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "epb"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+      start_period: 2s
     volumes:
-      - data-warehouse:/var/lib/postgresql@$POSTGRES_VERSION/data
+      - data-warehouse:/var/lib/postgresql/18/docker
 
   epb-addressing:
     build:
@@ -242,8 +258,9 @@ services:
       JWT_ISSUER: epb-auth-server
       JWT_SECRET: test-jwt-secret
       STAGE: development
-    links:
-      - epb-addressing-db
+    depends_on:
+      epb-addressing-db:
+        condition: service_healthy
     volumes:
       - ${EPB_ADDRESSING_PATH}:/app
 
