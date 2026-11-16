@@ -1,48 +1,48 @@
-x-api-app: &api-app
-  environment:
-    DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
-    EPB_UNLEASH_URI: http://epb-feature-flag/api
-    EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
-    EPB_AUTH_CLIENT_ID: bcef78ba-8e31-4639-8dc7-0754d1f67db8
-    EPB_AUTH_CLIENT_SECRET: register-api-secret
-    EPB_AUTH_SERVER: http://epb-auth-server/auth
-    EPB_ADDRESSING_URL: http://epb-addressing
-    JWT_ISSUER: epb-auth-server
-    JWT_SECRET: test-jwt-secret
-    STAGE: development
-    VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.2.0,SAP-Schema-19.1.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-NI-21.0.0,RdSAP-Schema-21.0.0,RdSAP-Schema-21.0.1,RdSAP-Schema-NI-21.0.1,SAP-Schema-S-19.0.0,SAP-Schema-S-20.0.0,RdSAP-Schema-S-19.0,RdSAP-Schema-S-21.0,RdSAP-Schema-S-22.0.0
-    VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0,DECAR-S-7.0,CS63-S-7.0,CEPC-S-7.1,DECAR-S-8.0.0,CS63-S-8.0.0,CEPC-S-8.0.0
-  depends_on:
-    epb-auth-server:
-      condition: service_started
-    epb-register-api-db:
-      condition: service_healthy
-    epb-data-warehouse-queues:
-      condition: service_started
-    epb-feature-flag:
-      condition: service_started
-  volumes:
-    - ${EPB_REGISTER_API_PATH}:/app
-
 services:
-  epb-proxy:
-    image: nginx
+  epb-register-api:
+    build:
+      context: ${EPB_REGISTER_API_PATH}
+      dockerfile: ${PWD}/sinatra.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://epb:superSecret30CharacterPassword@epb-register-api-db/epb
+      EPB_UNLEASH_URI: http://epb-feature-flag/api
+      EPB_DATA_WAREHOUSE_QUEUES_URI: redis://epb-data-warehouse-queues
+      EPB_AUTH_CLIENT_ID: bcef78ba-8e31-4639-8dc7-0754d1f67db8
+      EPB_AUTH_CLIENT_SECRET: register-api-secret
+      EPB_AUTH_SERVER: http://epb-auth-server/auth
+      EPB_ADDRESSING_URL: http://epb-addressing
+      JWT_ISSUER: epb-auth-server
+      JWT_SECRET: test-jwt-secret
+      STAGE: development
+      VALID_DOMESTIC_SCHEMAS: SAP-Schema-19.2.0,SAP-Schema-19.1.0,SAP-Schema-18.0.0,SAP-Schema-NI-18.0.0,RdSAP-Schema-NI-21.0.0,RdSAP-Schema-21.0.0,RdSAP-Schema-21.0.1,RdSAP-Schema-NI-21.0.1,SAP-Schema-S-19.0.0,SAP-Schema-S-20.0.0,RdSAP-Schema-S-19.0,RdSAP-Schema-S-21.0,RdSAP-Schema-S-22.0.0
+      VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0,DECAR-S-7.0,CS63-S-7.0,CEPC-S-7.1,DECAR-S-8.0.0,CS63-S-8.0.0,CEPC-S-8.0.0
+    volumes:
+      - ${EPB_REGISTER_API_PATH}:/app
     depends_on:
       epb-auth-server:
         condition: service_started
-      epb-register-api:
-        condition: service_started
-      epb-frontend:
+      epb-register-api-db:
+        condition: service_healthy
+      epb-data-warehouse-queues:
         condition: service_started
       epb-feature-flag:
         condition: service_started
-      epb-data-frontend:
-        condition: service_started
-    ports:
-      - "80:80"
+
+  epb-register-api-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: superSecret30CharacterPassword
+      POSTGRES_USER: epb
     volumes:
-      - ${PWD}/http_files:/var/www/http_files
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - register-api:/var/lib/postgresql/18/docker
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "epb"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+      start_period: 2s
 
   epb-frontend:
     build:
@@ -151,31 +151,6 @@ services:
       retries: 5
       start_period: 2s
 
-  epb-register-api:
-    <<: *api-app
-    build:
-      context: ${EPB_REGISTER_API_PATH}
-      dockerfile: ${PWD}/sinatra.Dockerfile
-
-  epb-register-api-db:
-    build:
-      context: ${PWD}/
-      dockerfile: ${PWD}/epbDatabase.Dockerfile
-    environment:
-      POSTGRES_PASSWORD: superSecret30CharacterPassword
-      POSTGRES_USER: epb
-    volumes:
-      - register-api:/var/lib/postgresql/18/docker
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "epb"]
-      interval: 1s
-      timeout: 1s
-      retries: 5
-      start_period: 2s
-
-  epb-data-warehouse-queues:
-    image: redis
-
   epb-feature-flag:
     build:
       context: ${PWD}/
@@ -264,22 +239,6 @@ services:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
 
-  epb-addressing-db:
-    build:
-      context: ${PWD}/
-      dockerfile: ${PWD}/epbDatabase.Dockerfile
-    environment:
-      POSTGRES_PASSWORD: SecretAddressingPassword
-      POSTGRES_USER: epb
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "epb"]
-      interval: 1s
-      timeout: 1s
-      retries: 5
-      start_period: 2s
-    volumes:
-      - addressing:/var/lib/postgresql/18/docker
-
   epb-data-warehouse-db:
     build:
       context: ${PWD}/
@@ -295,6 +254,9 @@ services:
       start_period: 2s
     volumes:
       - data-warehouse:/var/lib/postgresql/18/docker
+
+  epb-data-warehouse-queues:
+    image: redis
 
   epb-addressing:
     build:
@@ -314,6 +276,22 @@ services:
         condition: service_started
     volumes:
       - ${EPB_ADDRESSING_PATH}:/app
+
+  epb-addressing-db:
+    build:
+      context: ${PWD}/
+      dockerfile: ${PWD}/epbDatabase.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: SecretAddressingPassword
+      POSTGRES_USER: epb
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "epb"]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+      start_period: 2s
+    volumes:
+      - addressing:/var/lib/postgresql/18/docker
 
   one-login-simulator:
     image: ghcr.io/govuk-one-login/simulator:26.09.4
@@ -344,6 +322,25 @@ services:
     volumes:
       - dynamodb:/home/dynamodblocal/data
     working_dir: /home/dynamodblocal
+
+  epb-proxy:
+    image: nginx
+    depends_on:
+      epb-auth-server:
+        condition: service_started
+      epb-register-api:
+        condition: service_started
+      epb-frontend:
+        condition: service_started
+      epb-feature-flag:
+        condition: service_started
+      epb-data-frontend:
+        condition: service_started
+    ports:
+      - "80:80"
+    volumes:
+      - ${PWD}/http_files:/var/www/http_files
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
 volumes:
   feature-flag:
