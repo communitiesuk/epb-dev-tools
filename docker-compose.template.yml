@@ -14,10 +14,13 @@ x-api-app: &api-app
     VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0,DECAR-S-7.0,CS63-S-7.0,CEPC-S-7.1,DECAR-S-8.0.0,CS63-S-8.0.0,CEPC-S-8.0.0
   depends_on:
     epb-auth-server:
+      condition: service_started
     epb-register-api-db:
       condition: service_healthy
     epb-data-warehouse-queues:
+      condition: service_started
     epb-feature-flag:
+      condition: service_started
   volumes:
     - ${EPB_REGISTER_API_PATH}:/app
 
@@ -25,11 +28,16 @@ services:
   epb-proxy:
     image: nginx
     depends_on:
-      - epb-auth-server
-      - epb-register-api
-      - epb-frontend
-      - epb-feature-flag
-      - epb-data-frontend
+      epb-auth-server:
+        condition: service_started
+      epb-register-api:
+        condition: service_started
+      epb-frontend:
+        condition: service_started
+      epb-feature-flag:
+        condition: service_started
+      epb-data-frontend:
+        condition: service_started
     ports:
       - "80:80"
     volumes:
@@ -52,10 +60,13 @@ services:
       STAGE: development
     depends_on:
       epb-register-api:
+        condition: service_started
       epb-data-warehouse-api:
+        condition: service_started
       epb-feature-flag-db:
         condition: service_healthy
       epb-feature-flag:
+        condition: service_started
     volumes:
       - ${EPB_FRONTEND_PATH}:/app
       - /app/node_modules
@@ -87,14 +98,21 @@ services:
       NOTIFY_DATA_API_KEY: optoutrequest-658d1738-b6c2-426b-9215-a7a9b30ad44f-ec9bd43e-bf9b-41ef-9e11-43318a7d8c72
     depends_on:
       epb-auth-server:
+        condition: service_started
       epb-register-api:
+        condition: service_started
       epb-data-warehouse-api:
+        condition: service_started
       epb-feature-flag-db:
         condition: service_healthy
       dynamodb-local:
+        condition: service_started
       one-login-simulator:
+        condition: service_started
       kms-local:
+        condition: service_started
       epb-feature-flag:
+        condition: service_started
     volumes:
       - ${EPB_DATA_FRONTEND_PATH}:/app
       - /app/node_modules
@@ -207,9 +225,13 @@ services:
       epb-data-warehouse-db:
         condition: service_healthy
       epb-data-warehouse-queues:
+        condition: service_started
       dynamodb-local:
+        condition: service_started
       epb-feature-flag:
+        condition: service_started
       kms-local:
+        condition: service_started
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
@@ -229,11 +251,15 @@ services:
       AWS_SECRET_ACCESS_KEY: dummy
     depends_on:
       epb-auth-server:
+        condition: service_started
       epb-data-warehouse-db:
         condition: service_healthy
       dynamodb-local:
+        condition: service_started
       epb-feature-flag:
+        condition: service_started
       kms-local:
+        condition: service_started
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
@@ -281,9 +307,11 @@ services:
       STAGE: development
     depends_on:
       epb-auth-server:
+        condition: service_started
       epb-addressing-db:
         condition: service_healthy
       epb-feature-flag:
+        condition: service_started
     volumes:
       - ${EPB_ADDRESSING_PATH}:/app
 
