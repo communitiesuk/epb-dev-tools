@@ -31,6 +31,8 @@ COPY . .
 # Only run if the frontend-build make task exists
 RUN if make -n frontend-build >/dev/null 2>&1; then make frontend-build; fi
 
+RUN mkdir /tmp
+
 EXPOSE 80
 
 ENTRYPOINT bash -c 'bundle exec rackup -p 80 -o 0.0.0.0'
