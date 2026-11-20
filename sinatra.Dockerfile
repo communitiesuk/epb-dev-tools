@@ -1,4 +1,4 @@
-FROM ruby:4.0.9
+FROM ruby:4.0.10
 
 ENV LANG=C.UTF-8
 
@@ -31,7 +31,7 @@ COPY . .
 # Only run if the frontend-build make task exists
 RUN if make -n frontend-build >/dev/null 2>&1; then make frontend-build; fi
 
-RUN mkdir /tmp
+RUN mkdir -p /tmp
 
 EXPOSE 80
 
