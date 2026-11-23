@@ -95,6 +95,7 @@ generate_template() {
   rm -r docker-compose.yml 2>/dev/null
 
   SUBSTITUTE_VARS='\
+    ${DEV_TOOLS_DIRECTORY},\
     ${EPB_ADDRESSING_PATH},\
     ${EPB_AUTH_SERVER_PATH},\
     ${EPB_DATA_FRONTEND_PATH},\

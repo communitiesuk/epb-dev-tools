@@ -18,6 +18,7 @@ services:
       VALID_NON_DOMESTIC_SCHEMAS: CEPC-8.0.0,CEPC-NI-8.0.0,DECAR-S-7.0,CS63-S-7.0,CEPC-S-7.1,DECAR-S-8.0.0,CS63-S-8.0.0,CEPC-S-8.0.0
     volumes:
       - ${EPB_REGISTER_API_PATH}:/app
+      - ${DEV_TOOLS_DIRECTORY}:/public-certificates
     depends_on:
       epb-auth-server:
         condition: service_started
@@ -70,6 +71,7 @@ services:
     volumes:
       - ${EPB_FRONTEND_PATH}:/app
       - /app/node_modules
+      - ${DEV_TOOLS_DIRECTORY}:/public-certificates
 
   epb-data-frontend:
     build:
@@ -116,6 +118,7 @@ services:
     volumes:
       - ${EPB_DATA_FRONTEND_PATH}:/app
       - /app/node_modules
+      - ${DEV_TOOLS_DIRECTORY}:/public-certificates
 
   epb-auth-server:
     build:
@@ -134,6 +137,7 @@ services:
         condition: service_healthy
     volumes:
       - ${EPB_AUTH_SERVER_PATH}:/app
+      - ${DEV_TOOLS_DIRECTORY}:/public-certificates
 
   epb-auth-server-db:
     build:
@@ -210,6 +214,7 @@ services:
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
+      - ${DEV_TOOLS_DIRECTORY}:/public-certificates
 
   epb-data-warehouse-api:
     build:
@@ -238,6 +243,7 @@ services:
     volumes:
       - ${EPB_DATA_WAREHOUSE_PATH}:/app
       - /app/node_modules
+      - ${DEV_TOOLS_DIRECTORY}:/public-certificates
 
   epb-data-warehouse-db:
     build:
@@ -276,6 +282,7 @@ services:
         condition: service_started
     volumes:
       - ${EPB_ADDRESSING_PATH}:/app
+      - ${DEV_TOOLS_DIRECTORY}:/public-certificates
 
   epb-addressing-db:
     build:
