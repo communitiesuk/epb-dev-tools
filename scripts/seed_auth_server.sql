@@ -1,7 +1,7 @@
 INSERT INTO clients (id, name, supplemental) VALUES 
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'all-scopes', '{"scheme_ids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]}'),
   ('6f61579e-e829-47d7-aef5-7d36ad068bee', 'epb_frontend', '{}'),
-  ('5e7b7607-971b-45a4-9155-cb4f6ea7e9f5', 'epb_data_warehouse', '{}'),
+  ('5e7b7607-971b-45a4-9155-cb4f6ea7e9f5', 'epb_data_warehouse', '{"scheme_ids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]}'),
   ('bcef78ba-8e31-4639-8dc7-0754d1f67db8', 'epb_register_api', '{}')
   ON CONFLICT (id) DO NOTHING;
 
