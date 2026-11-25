@@ -4,6 +4,8 @@ source scripts/_functions.sh
 
 echo -e "\nSetting up epb dev tools\n"
 
+DEV_TOOLS_DIRECTORY=$(pwd)
+
 clone_application "EPB Frontend" "https://github.com/communitiesuk/epb-frontend.git"
 EPB_FRONTEND_PATH="$(printf "%q" "$CODEBASE_PATH")"
 
@@ -22,6 +24,7 @@ EPB_DATA_WAREHOUSE_PATH="$(printf "%q" "$CODEBASE_PATH")"
 clone_application "EPB Addressing" "https://github.com/communitiesuk/epb-addressing.git"
 EPB_ADDRESSING_PATH="$(printf "%q" "$CODEBASE_PATH")"
 
+DEV_TOOLS_DIRECTORY=$DEV_TOOLS_DIRECTORY \
 EPB_FRONTEND_PATH=$EPB_FRONTEND_PATH \
 EPB_DATA_FRONTEND_PATH=$EPB_DATA_FRONTEND_PATH \
 EPB_AUTH_SERVER_PATH=$EPB_AUTH_SERVER_PATH \

@@ -6,6 +6,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get update && apt-get install -y ca-certificates curl gnupg
 
+COPY /public-certificates/zscaler-root-ca.crt \
+    /usr/local/share/ca-certificates/zscaler-root-ca.crt
+
+RUN update-ca-certificates
+
 # Install postgresql-client
 # https://www.postgresql.org/download/linux/ubuntu/
 RUN set -ex \
