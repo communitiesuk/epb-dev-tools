@@ -86,7 +86,7 @@ Register
 
 #### Toggles / Feature flags
 
-* You can now create toggles in the feature flags application found at http://epb-feature-flag
+* You can now create toggles in the feature flags application found at http://epb-feature-flag.localhost
 * The script in the seed_unleashed.sh, will set up the feature flag with a few toggles.
 * The upgrade to v7, has resulted in a few changes to how the application works
 * The default environment is no longer functional, instead there is a development 
