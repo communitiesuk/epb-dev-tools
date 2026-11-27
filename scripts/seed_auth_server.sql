@@ -23,6 +23,7 @@ INSERT INTO client_scopes (client_id, scope) VALUES
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'assessment:search'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'assessmentmetadata:fetch'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'assessor:search'),
+  ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'assessor:brel-email'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'bus:assessment:search'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'dec_summary:fetch'),
   ('a084abff-c22d-4b78-875c-1e7b163c5ee3', 'ecoplus:assessment:fetch'),
